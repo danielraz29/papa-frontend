@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  background-color: #f0f4f8;
+  font-family: 'Arial', sans-serif;
+  direction: rtl;
+}
+
+.container {
+  background-color: #ffffff;
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+input[type="text"],
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+label {
+  display: inline-block;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+.next-button {
+  margin-top: 25px;
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-button:hover {
+  background-color: #45a049;
+}
+.summary {
+  background-color: #f9f9f9;
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.summary h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.summary ul {
+  padding-right: 20px;
+  list-style: square;
+}
+/* הוספת עיצוב ל-popup */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* צבע רקע כהה */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.popup button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background-color: #0056b3;
+}
+.navbar {
+  background-color: white;
+  padding: 10px 20px;
+  direction: rtl;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  gap: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar li {
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 18px;
+}

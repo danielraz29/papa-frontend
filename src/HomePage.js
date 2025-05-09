@@ -45,7 +45,7 @@ function HomePage() {
       <main className={styles.formCard}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
-            <label>שם משתמש</label>
+            <label className={styles.label}>שם משתמש</label>
             <input
               type="text"
               value={name}
@@ -56,7 +56,7 @@ function HomePage() {
           </div>
 
           <div className={styles.formGroup}>
-            <label>סיסמה</label>
+            <label className={styles.label}>סיסמה</label>
             <input
               type="password"
               value={password}

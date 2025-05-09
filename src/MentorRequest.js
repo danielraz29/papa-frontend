@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './MentorRequest.css';
+import styles from "./MentorRequest.module.css"; // <<< זה השלב 2!
 
 function App() {
   const [year, setYear] = useState("");

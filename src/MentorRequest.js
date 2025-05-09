@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./MentorRequest.module.css"; // CSS Module
+import styles from "./MentorRequest.module.css";
 
 function MentorRequest() {
   const [year, setYear] = useState("");
@@ -18,7 +18,7 @@ function MentorRequest() {
   const handleDayChange = (day, checked) => {
     const updatedDays = checked
       ? [...selectedDays, day]
-      : selectedDays.filter(d => d !== day);
+      : selectedDays.filter((d) => d !== day);
 
     const updatedAvailability = { ...availability };
     if (!checked) {
@@ -30,9 +30,9 @@ function MentorRequest() {
   };
 
   const handleTimeChange = (day, time) => {
-    setAvailability(prev => ({
+    setAvailability((prev) => ({
       ...prev,
-      [day]: time
+      [day]: time,
     }));
   };
 
@@ -66,52 +66,60 @@ function MentorRequest() {
 
   return (
     <div className={styles.container}>
-      <h1>אנא מלא/י את הפרטים הבאים</h1>
+      <h1 className={styles.title}>אנא מלא/י את הפרטים הבאים</h1>
 
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <h2>שם מלא</h2>
+          <h2 className={styles.subHeading}>שם מלא</h2>
           <input
             type="text"
             placeholder="הקלד/י את שמך"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
+            className={styles.inputText}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <h2>טלפון</h2>
+          <h2 className={styles.subHeading}>טלפון</h2>
           <input
             type="text"
             placeholder="הקלד/י מספר טלפון"
             value={phone}
-            onChange={e => setPhone(e.target.value)}
+            onChange={(e) => setPhone(e.target.value)}
+            className={styles.inputText}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <h2>תחום התמחות (תואר)</h2>
+          <h2 className={styles.subHeading}>תחום התמחות (תואר)</h2>
           <input
             type="text"
             placeholder="הקלד/י את שם התואר"
             value={degree}
-            onChange={e => setDegree(e.target.value)}
+            onChange={(e) => setDegree(e.target.value)}
+            className={styles.inputText}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <h2>ציון ממוצע שנתי</h2>
+          <h2 className={styles.subHeading}>ציון ממוצע שנתי</h2>
           <input
             type="text"
             placeholder="הקלד/י את ממוצע הציונים"
             value={average}
-            onChange={e => setAverage(e.target.value)}
+            onChange={(e) => setAverage(e.target.value)}
+            className={styles.inputText}
           />
         </div>
 
         <div className={styles.formGroup}>
-          <h2>שנת לימודים נוכחית</h2>
-          <select value={year} onChange={e => setYear(e.target.value)}>
+          <h2 className={styles.subHeading}>שנת לימודים נוכחית</h2>
+          <select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className={styles.select}
+          >
             <option value="">בחר/י שנה</option>
             <option>א'</option>
             <option>ב'</option>
@@ -121,10 +129,10 @@ function MentorRequest() {
         </div>
 
         <div className={styles.formGroup}>
-          <h2>זמינות ימים ושעות</h2>
-          {days.map(day => (
+          <h2 className={styles.subHeading}>זמינות ימים ושעות</h2>
+          {days.map((day) => (
             <div key={day} className={styles.dayItem}>
-              <label>
+              <label className={styles.label}>
                 <input
                   type="checkbox"
                   checked={selectedDays.includes(day)}
@@ -152,7 +160,7 @@ function MentorRequest() {
         </div>
 
         <div className={styles.formGroup}>
-          <h2>העלה/י קורות חיים</h2>
+          <h2 className={styles.subHeading}>העלה/י קורות חיים</h2>
           <input
             type="file"
             accept=".pdf,.doc,.docx"
@@ -174,7 +182,9 @@ function MentorRequest() {
           <div className={styles.popupContent}>
             <h1>בקשתך נשלחה</h1>
             <p>ניצור עמך קשר בהקדם.</p>
-            <button onClick={closePopup}>סגור</button>
+            <button className={styles.popupButton} onClick={closePopup}>
+              סגור
+            </button>
           </div>
         </div>
       )}

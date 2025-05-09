@@ -69,7 +69,7 @@ function HomePage() {
             <option value="אוניברסיטת חיפה">אוניברסיטת חיפה</option>
           </select>
           <div className="actions">
-            <button type="button" className="secondary-btn">בקשה לחונכות</button>
+            <button type="button" className="secondary-btn"  onClick={() => navigate("/mentor-request")}>בקשה לחונכות</button>
             <button type="submit" className="primary-btn">התחברות</button>
           </div>
           {error && <p className="error">{error}</p>}

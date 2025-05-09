@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from "./HomePage.module.css"; // CSS Module
+import styles from './HomePage.module.css'; // CSS Module
 
 function HomePage() {
   const [name, setName] = useState('');
@@ -41,6 +41,7 @@ function HomePage() {
         <h1>ברוכים הבאים למערכת פאפא 🎓</h1>
         <p className={styles.subtitle}>מרכז דיגיטלי לחונכות אקדמית – פשוט, מהיר, אישי</p>
       </header>
+
       <main className={styles.formCard}>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
@@ -50,8 +51,10 @@ function HomePage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="הכנס/י את המייל"
+              className={styles.input}
             />
           </div>
+
           <div className={styles.formGroup}>
             <label>סיסמה</label>
             <input
@@ -59,17 +62,22 @@ function HomePage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="********"
+              className={styles.input}
             />
           </div>
-          <select
-            value={institution}
-            onChange={(e) => setInstitution(e.target.value)}
-            className={styles.select}
-          >
-            <option value=""> מוסד אקדמי</option>
-            <option value="אוניברסיטת תל אביב">אוניברסיטת תל אביב</option>
-            <option value="אוניברסיטת חיפה">אוניברסיטת חיפה</option>
-          </select>
+
+          <div className={styles.formGroup}>
+            <select
+              value={institution}
+              onChange={(e) => setInstitution(e.target.value)}
+              className={styles.select}
+            >
+              <option value=""> מוסד אקדמי</option>
+              <option value="אוניברסיטת תל אביב">אוניברסיטת תל אביב</option>
+              <option value="אוניברסיטת חיפה">אוניברסיטת חיפה</option>
+            </select>
+          </div>
+
           <div className={styles.actions}>
             <button
               type="button"
@@ -82,6 +90,7 @@ function HomePage() {
               התחברות
             </button>
           </div>
+
           {error && <p className={styles.error}>{error}</p>}
         </form>
       </main>

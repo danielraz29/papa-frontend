@@ -1,4 +1,4 @@
-import './HomePage.css';
+import styles from "./HomePage.module.css"; // <<< זה השלב 2!
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

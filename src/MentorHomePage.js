@@ -1,5 +1,4 @@
 import React from "react";
-import './MentorRequest.css';
 
 function MentorHomePage() {
   return (

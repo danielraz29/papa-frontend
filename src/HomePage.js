@@ -1,6 +1,6 @@
-import styles from "./HomePage.module.css"; // <<< זה השלב 2!
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from "./HomePage.module.css"; // CSS Module
 
 function HomePage() {
   const [name, setName] = useState('');
@@ -29,23 +29,21 @@ function HomePage() {
         throw new Error(data.detail || 'שגיאה בהתחברות');
       }
 
-      // ניווט לפי התפקיד
-      navigate(data.redirectTo);  // דוגמה: /dashboard/admin
-
+      navigate(data.redirectTo);
     } catch (err) {
       setError(err.message);
     }
   };
 
   return (
-    <div className="page-wrapper">
-      <header className="header">
+    <div className={styles.pageWrapper}>
+      <header className={styles.header}>
         <h1>ברוכים הבאים למערכת פאפא 🎓</h1>
-        <p className="subtitle">מרכז דיגיטלי לחונכות אקדמית – פשוט, מהיר, אישי</p>
+        <p className={styles.subtitle}>מרכז דיגיטלי לחונכות אקדמית – פשוט, מהיר, אישי</p>
       </header>
-      <main className="form-card">
-        <form onSubmit={handleSubmit} className="form">
-          <div className="form-group">
+      <main className={styles.formCard}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
             <label>שם משתמש</label>
             <input
               type="text"
@@ -54,7 +52,7 @@ function HomePage() {
               placeholder="הכנס/י את המייל"
             />
           </div>
-          <div className="form-group">
+          <div className={styles.formGroup}>
             <label>סיסמה</label>
             <input
               type="password"
@@ -63,16 +61,28 @@ function HomePage() {
               placeholder="********"
             />
           </div>
-          <select value={institution} onChange={(e) => setInstitution(e.target.value)}>
+          <select
+            value={institution}
+            onChange={(e) => setInstitution(e.target.value)}
+            className={styles.select}
+          >
             <option value=""> מוסד אקדמי</option>
             <option value="אוניברסיטת תל אביב">אוניברסיטת תל אביב</option>
             <option value="אוניברסיטת חיפה">אוניברסיטת חיפה</option>
           </select>
-          <div className="actions">
-            <button type="button" className="secondary-btn"  onClick={() => navigate("/mentor-request")}>בקשה לחונכות</button>
-            <button type="submit" className="primary-btn">התחברות</button>
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={() => navigate("/mentor-request")}
+            >
+              בקשה לחונכות
+            </button>
+            <button type="submit" className={styles.primaryBtn}>
+              התחברות
+            </button>
           </div>
-          {error && <p className="error">{error}</p>}
+          {error && <p className={styles.error}>{error}</p>}
         </form>
       </main>
     </div>

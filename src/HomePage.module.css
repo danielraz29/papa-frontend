@@ -4,11 +4,11 @@
   padding: 30px 20px 50px;
   text-align: center;
   min-height: 100vh;
+  background-color: #f5f7fa;
   box-sizing: border-box;
-}
-
-.header {
-  margin-bottom: 10px;
+  direction: rtl;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
 
 .header h1 {
@@ -46,6 +46,23 @@
   text-align: right;
   display: flex;
   flex-direction: column;
+}
+
+.label {
+  font-weight: 700;
+  margin-bottom: 5px;
+  font-size: 14px;
+  text-align: right;
+}
+
+.input {
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: white;
 }
 
 .select {
@@ -99,5 +116,6 @@
 
 .error {
   color: red;
-  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
 }

@@ -1,10 +1,3 @@
-body {
-  margin: 0;
-  background-color: #f0f4f8;
-  font-family: 'Arial', sans-serif;
-  direction: rtl;
-}
-
 .container {
   background-color: #ffffff;
   max-width: 600px;
@@ -14,24 +7,23 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.title {
   text-align: center;
   color: #333;
   margin-bottom: 30px;
 }
 
-.form-group {
+.formGroup {
   margin-bottom: 20px;
 }
 
-h2 {
+.subHeading {
   font-size: 18px;
   margin-bottom: 8px;
   color: #555;
 }
 
-input[type="text"],
-select {
+.inputText {
   width: 100%;
   padding: 10px;
   font-size: 16px;
@@ -40,13 +32,23 @@ select {
   box-sizing: border-box;
 }
 
-label {
+.select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.label {
   display: inline-block;
   margin-right: 10px;
   margin-top: 5px;
 }
 
-.next-button {
+.nextButton {
   margin-top: 25px;
   width: 100%;
   background-color: #4CAF50;
@@ -59,9 +61,10 @@ label {
   transition: background-color 0.3s ease;
 }
 
-.next-button:hover {
+.nextButton:hover {
   background-color: #45a049;
 }
+
 .summary {
   background-color: #f9f9f9;
   margin-top: 30px;
@@ -70,30 +73,30 @@ label {
   border: 1px solid #ddd;
 }
 
-.summary h2 {
+.summaryHeading {
   font-size: 18px;
   margin-bottom: 10px;
   color: #444;
 }
 
-.summary ul {
+.summaryList {
   padding-right: 20px;
   list-style: square;
 }
-/* הוספת עיצוב ל-popup */
+
 .popup {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* צבע רקע כהה */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.popup-content {
+.popupContent {
   background-color: white;
   padding: 20px;
   border-radius: 10px;
@@ -101,7 +104,7 @@ label {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.popup button {
+.popupButton {
   margin-top: 20px;
   padding: 10px 20px;
   background-color: #007bff;
@@ -111,17 +114,17 @@ label {
   cursor: pointer;
 }
 
-.popup button:hover {
+.popupButton:hover {
   background-color: #0056b3;
 }
+
 .navbar {
   background-color: white;
   padding: 10px 20px;
-  direction: rtl;
   border-bottom: 1px solid #ddd;
 }
 
-.navbar ul {
+.navList {
   list-style: none;
   display: flex;
   justify-content: flex-start;
@@ -130,7 +133,7 @@ label {
   margin: 0;
 }
 
-.navbar li {
+.navItem {
   color: #007bff;
   font-weight: bold;
   cursor: pointer;

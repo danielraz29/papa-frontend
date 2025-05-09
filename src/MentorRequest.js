@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import styles from "./MentorRequest.module.css"; // <<< זה השלב 2!
+import styles from "./MentorRequest.module.css"; // CSS Module
 
-function App() {
+function MentorRequest() {
   const [year, setYear] = useState("");
   const [availability, setAvailability] = useState({});
   const [selectedDays, setSelectedDays] = useState([]);
@@ -65,12 +65,11 @@ function App() {
   };
 
   return (
-    <div className="container">
-
+    <div className={styles.container}>
       <h1>אנא מלא/י את הפרטים הבאים</h1>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>שם מלא</h2>
           <input
             type="text"
@@ -80,7 +79,7 @@ function App() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>טלפון</h2>
           <input
             type="text"
@@ -90,7 +89,7 @@ function App() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>תחום התמחות (תואר)</h2>
           <input
             type="text"
@@ -100,7 +99,7 @@ function App() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>ציון ממוצע שנתי</h2>
           <input
             type="text"
@@ -110,7 +109,7 @@ function App() {
           />
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>שנת לימודים נוכחית</h2>
           <select value={year} onChange={e => setYear(e.target.value)}>
             <option value="">בחר/י שנה</option>
@@ -121,10 +120,10 @@ function App() {
           </select>
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>זמינות ימים ושעות</h2>
           {days.map(day => (
-            <div key={day} style={{ marginBottom: "10px" }}>
+            <div key={day} className={styles.dayItem}>
               <label>
                 <input
                   type="checkbox"
@@ -136,7 +135,7 @@ function App() {
 
               {selectedDays.includes(day) && (
                 <select
-                  style={{ marginRight: "10px", marginTop: "5px" }}
+                  className={styles.timeSelect}
                   onChange={(e) => handleTimeChange(day, e.target.value)}
                   value={availability[day] || ""}
                 >
@@ -152,7 +151,7 @@ function App() {
           ))}
         </div>
 
-        <div className="form-group">
+        <div className={styles.formGroup}>
           <h2>העלה/י קורות חיים</h2>
           <input
             type="file"
@@ -163,7 +162,7 @@ function App() {
 
         <button
           type="submit"
-          className="next-button"
+          className={styles.nextButton}
           disabled={!isFormComplete()}
         >
           שלח
@@ -171,8 +170,8 @@ function App() {
       </form>
 
       {showPopup && (
-        <div className="popup">
-          <div className="popup-content">
+        <div className={styles.popup}>
+          <div className={styles.popupContent}>
             <h1>בקשתך נשלחה</h1>
             <p>ניצור עמך קשר בהקדם.</p>
             <button onClick={closePopup}>סגור</button>
@@ -183,4 +182,4 @@ function App() {
   );
 }
 
-export default App;
+export default MentorRequest;

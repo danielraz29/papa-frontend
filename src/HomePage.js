@@ -15,7 +15,7 @@ function HomePage() {
     setError('');
 
     try {
-      const response = await fetch('https://papa-backend.onrender.com/login', {
+      const response = await fetch("http://localhost:8000/login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -29,7 +29,15 @@ function HomePage() {
         throw new Error(data.detail || 'שגיאה בהתחברות');
       }
 
-      navigate(data.redirectTo);
+      // ✅ שמירת פרטי המשתמש ב-localStorage
+      localStorage.setItem("user", JSON.stringify({
+        id: data.userId,
+        name: data.name,
+        role: data.role || "mentee"
+      }));
+
+      // ניווט לדשבורד או לדף אחר בהתאם לתגובה
+      navigate(data.redirectTo || "/dashboard/mentee");
     } catch (err) {
       setError(err.message);
     }

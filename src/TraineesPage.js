@@ -6,7 +6,7 @@ function TraineesPage() {
   const [trainees, setTrainees] = useState([]);
 
   useEffect(() => {
-    fetch('https://papa-mentor-app.onrender.com/api/mentees')
+    fetch('https://papa-backend.onrender.com/api/mentees')
       .then(res => res.json())
       .then(data => {
         console.log("🎓 חניכים שהתקבלו מהשרת:", data);
@@ -65,7 +65,7 @@ function TraineesPage() {
                       className="export-btn"
                       onClick={() => {
                         console.log("📤 נלחץ כפתור ייצוא לחניך:", t._id);
-                        fetch(`https://papa-mentor-app.onrender.com/api/export-matches/${t._id}`)
+                        fetch(`https://papa-backend.onrender.com/api/export-matches/${t._id}`)
                           .then((res) => res.blob())
                           .then((blob) => {
                             const url = window.URL.createObjectURL(blob);

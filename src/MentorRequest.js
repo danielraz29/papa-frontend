@@ -9,11 +9,15 @@ function MentorRequest() {
   const [availability, setAvailability] = useState({});
   const [selectedDays, setSelectedDays] = useState([]);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [idNumber, setIdNumber] = useState("");
+  const [personalEmail, setPersonalEmail] = useState("");
+  const [collegeEmail, setCollegeEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [degree, setDegree] = useState("");
+  const [school, setSchool] = useState(""); // שדה חדש
   const [average, setAverage] = useState("");
   const [resume, setResume] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
   const [errors, setErrors] = useState({});
   const [showPopup, setShowPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,6 +28,7 @@ function MentorRequest() {
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
   const validatePhone = (phone) => /^\d{7,}$/.test(phone);
+  const validateIdNumber = (id) => /^\d{9}$/.test(id);
   const validateResume = (file) => {
     const validTypes = [
       "application/pdf",
@@ -32,18 +37,26 @@ function MentorRequest() {
     ];
     return file && validTypes.includes(file.type);
   };
+  const validateImage = (file) => {
+    const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+    return file && file.size <= maxSizeInBytes;
+  };
 
   const validateForm = () => {
     const newErrors = {};
     if (!name) newErrors.name = true;
-    if (!validateEmail(email)) newErrors.email = true;
+    if (!validateIdNumber(idNumber)) newErrors.idNumber = true;
+    if (!validateEmail(personalEmail)) newErrors.personalEmail = true;
+    if (!validateEmail(collegeEmail)) newErrors.collegeEmail = true;
     if (!validatePhone(phone)) newErrors.phone = true;
     if (!degree) newErrors.degree = true;
+    if (!school) newErrors.school = true;
     if (!average) newErrors.average = true;
     if (!year) newErrors.year = true;
     if (selectedDays.length === 0) newErrors.availability = true;
     if (Object.keys(availability).length !== selectedDays.length) newErrors.availability = true;
     if (!validateResume(resume)) newErrors.resume = true;
+    if (!validateImage(profilePic)) newErrors.profilePic = true;
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -79,6 +92,17 @@ function MentorRequest() {
     }
   };
 
+  const handleProfilePicUpload = (e) => {
+    const file = e.target.files[0];
+    if (validateImage(file)) {
+      setProfilePic(file);
+      setErrors((prev) => ({ ...prev, profilePic: false }));
+    } else {
+      alert("תמונת הסטודנט חורגת מהגודל המותר (עד 2MB)");
+      setErrors((prev) => ({ ...prev, profilePic: true }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -87,18 +111,21 @@ function MentorRequest() {
 
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
-      formData.append("phone", phone);
-      formData.append("degree", degree);
-      formData.append("average", average);
-      formData.append("year", year);
-      formData.append("resume", resume);
-      formData.append("availability", JSON.stringify(availability));
-      formData.append("role", "mentor");
+      formData.append("fulllName", name);
+      formData.append("idNumber", idNumber);
+      formData.append("personalEmail", personalEmail);
+      formData.append("collegeEmail", collegeEmail);
+      formData.append("phoneNumber", phone);
+      formData.append("school", school); // שדה חדש
+      formData.append("averageGrade", average);
+      formData.append("studyYear", year);
+      formData.append("cvUrl", resume);
+      formData.append("profilePic", profilePic);
+      formData.append("availableDays", JSON.stringify(availability));
       formData.append("status", "pending");
+      formData.append("degrees", JSON.stringify(degree.split(',').map(d => d.trim()))); // לפצל לרשימה
 
-      const response = await fetch("https://papa-backend.onrender.com/mentor-request", {
+      const response = await fetch("http://localhost:8000/mentor-request", {
         method: "POST",
         body: formData,
       });
@@ -135,12 +162,32 @@ function MentorRequest() {
         </div>
 
         <div className={styles.formGroup}>
-          <label className={styles.label}><FaEnvelope /> מייל</label>
+          <label className={styles.label}>תעודת זהות</label>
+          <input
+            type="text"
+            value={idNumber}
+            onChange={(e) => setIdNumber(e.target.value)}
+            className={`${styles.inputText} ${errors.idNumber ? styles.errorInput : ""}`}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}><FaEnvelope /> מייל אישי</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={`${styles.inputText} ${errors.email ? styles.errorInput : ""}`}
+            value={personalEmail}
+            onChange={(e) => setPersonalEmail(e.target.value)}
+            className={`${styles.inputText} ${errors.personalEmail ? styles.errorInput : ""}`}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}><FaEnvelope /> מייל מכללה</label>
+          <input
+            type="email"
+            value={collegeEmail}
+            onChange={(e) => setCollegeEmail(e.target.value)}
+            className={`${styles.inputText} ${errors.collegeEmail ? styles.errorInput : ""}`}
           />
         </div>
 
@@ -158,9 +205,21 @@ function MentorRequest() {
           <label className={styles.label}>תחום התמחות</label>
           <input
             type="text"
+            placeholder="לדוגמה: מבני נתונים, SQL בסיסי, ניתוח מערכות מידע"
             value={degree}
             onChange={(e) => setDegree(e.target.value)}
             className={`${styles.inputText} ${errors.degree ? styles.errorInput : ""}`}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}>בית ספר</label>
+          <input
+            type="text"
+            placeholder="לדוגמה: מערכות מידע"
+            value={school}
+            onChange={(e) => setSchool(e.target.value)}
+            className={`${styles.inputText} ${errors.school ? styles.errorInput : ""}`}
           />
         </div>
 
@@ -198,7 +257,6 @@ function MentorRequest() {
                 checked={selectedDays.includes(day)}
                 onChange={(e) => handleDayChange(day, e.target.checked)}
               /> {day}
-
               {selectedDays.includes(day) && (
                 <div className={styles.selectWrapper}>
                   <label className={styles.smallLabel}>בחר/י שעה</label>
@@ -226,6 +284,16 @@ function MentorRequest() {
             accept=".pdf,.doc,.docx"
             onChange={handleResumeUpload}
             className={`${styles.inputText} ${errors.resume ? styles.errorInput : ""}`}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.label}><FaFileUpload /> תמונת סטודנט</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleProfilePicUpload}
+            className={`${styles.inputText} ${errors.profilePic ? styles.errorInput : ""}`}
           />
         </div>
 

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const fetchMentors = async (formData) => {
   const response = await fetch("https://papa-backend.onrender.com/api/match-mentors", {
@@ -23,6 +24,8 @@ const fetchMentors = async (formData) => {
 
 
 export default function MentorSwipe() {
+const navigate = useNavigate();
+
   const [mentors, setMentors] = useState([]);
   const [index, setIndex] = useState(0);
   const [likedMentors, setLikedMentors] = useState([]);
@@ -120,12 +123,9 @@ export default function MentorSwipe() {
     transition={{ duration: 0.5 }}
   >
     <p className="text-lg font-semibold mb-4">{finalMessage}</p>
-    <button
-      onClick={() => window.location.href = "/dashboard/mentee"}
-      className="mt-2 text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
-    >
-      חזרה לדף הבית
-    </button>
+  <button onClick={() => navigate("/dashboard/mentee")}>
+  חזרה לדף הבית
+</button>
   </motion.div>
 )}
 

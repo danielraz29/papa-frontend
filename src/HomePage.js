@@ -7,12 +7,14 @@ function HomePage() {
   const [password, setPassword] = useState('');
   const [institution, setInstitution] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // מצב טעינה
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const response = await fetch("https://papa-backend.onrender.com/login", {
@@ -29,17 +31,17 @@ function HomePage() {
         throw new Error(data.detail || 'שגיאה בהתחברות');
       }
 
-      // ✅ שמירת פרטי המשתמש ב-localStorage
       localStorage.setItem("user", JSON.stringify({
         id: data.userId,
         name: data.name,
         role: data.role || "mentee"
       }));
 
-      // ניווט לדשבורד או לדף אחר בהתאם לתגובה
       navigate(data.redirectTo || "/dashboard/mentee");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,11 +93,19 @@ function HomePage() {
               type="button"
               className={styles.secondaryBtn}
               onClick={() => navigate("/mentor-request")}
+              disabled={loading}
             >
               בקשה לחונכות
             </button>
-            <button type="submit" className={styles.primaryBtn}>
-              התחברות
+
+            <button type="submit" className={styles.primaryBtn} disabled={loading}>
+              {loading ? (
+                <span className={styles.loadingWrapper}>
+                  <span className={styles.spinner}></span> מתחבר...
+                </span>
+              ) : (
+                "התחברות"
+              )}
             </button>
           </div>
 

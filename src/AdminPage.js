@@ -10,7 +10,7 @@ function AdminPage() {
   const rowRefs = useRef([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/mentors')
+    fetch('https://papa-backend.onrender.com/api/mentors')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -57,7 +57,7 @@ function AdminPage() {
       status: newStatus
     };
 
-    fetch('http://localhost:8000/api/update-status', {
+    fetch('https://papa-backend.onrender.com/api/update-status', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -75,7 +75,7 @@ function AdminPage() {
   // ✅ exportMeetings – ייצוא אקסל עם שם שמגיע מהשרת (ללא @)
  const exportMeetings = async (userName) => {
   try {
-    const response = await fetch('http://localhost:8000/api/meetings-by-mentor', {
+    const response = await fetch('https://papa-backend.onrender.com/api/meetings-by-mentor', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

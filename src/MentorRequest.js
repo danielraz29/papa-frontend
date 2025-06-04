@@ -125,7 +125,7 @@ function MentorRequest() {
       formData.append("status", "pending");
       formData.append("degrees", JSON.stringify(degree.split(',').map(d => d.trim()))); // לפצל לרשימה
 
-      const response = await fetch("https://papa-mentor-app.onrender.com/mentor-request", {
+      const response = await fetch("https://papa-backend.onrender.com/mentor-request", {
         method: "POST",
         body: formData,
       });

@@ -44,11 +44,11 @@ function MenteeDashboard() {
     }
     setLoggedUser(user);
 
-    fetch(`https://papa-mentor-app.onrender.com/api/meetings?menteeId=${user.id}`)
+    fetch(`https://papa-backend.onrender.com/api/meetings?menteeId=${user.id}`)
       .then(res => res.json())
       .then(data => setMeetings(data));
 
-    fetch(`https://papa-mentor-app.onrender.com/api/mentor-requests?menteeId=${user.id}&status=in%20progress`)
+    fetch(`https://papa-backend.onrender.com/api/mentor-requests?menteeId=${user.id}&status=in%20progress`)
       .then(res => res.json())
       .then(data => {
         setAssignments(data);
@@ -91,7 +91,7 @@ function MenteeDashboard() {
       matchId: matched._id,
     };
 
-    fetch("https://papa-mentor-app.onrender.com/api/meetings", {
+    fetch("https://papa-backend.onrender.com/api/meetings", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(meetingToSave)
@@ -104,7 +104,7 @@ function MenteeDashboard() {
   };
 
   const handleDeleteMeeting = (id) => {
-    fetch(`https://papa-mentor-app.onrender.com/api/meetings/${id}`, {
+    fetch(`https://papa-backend.onrender.com/api/meetings/${id}`, {
       method: "DELETE",
     })
       .then(res => {

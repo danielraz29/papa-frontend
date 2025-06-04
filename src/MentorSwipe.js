@@ -5,7 +5,7 @@ import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const fetchMentors = async (formData) => {
-  const response = await fetch("http://localhost:8000/api/match-mentors", {
+  const response = await fetch("https://papa-mentor-app.onrender.com/api/match-mentors", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -37,7 +37,7 @@ export default function MentorSwipe() {
     setFinalMessage("📨 נשלחה הודעה לחונך, נעדכן אותך כשהוא ייצור קשר!");
     setHasLiked(true);
   
-    await fetch("http://localhost:8000/api/select-mentor", {
+    await fetch("https://papa-mentor-app.onrender.com/api/select-mentor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

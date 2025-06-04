@@ -1,0 +1,180 @@
+.admin-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    direction: rtl;
+    padding-top: 80px; /* כדי למנוע חפיפה עם התפריט העליון */
+  }
+  
+  .admin-wrapper {
+    flex: 1;
+    padding: 40px;
+    background: #f9f9f9;
+    overflow: visible;
+  }
+  
+  .admin-wrapper h1 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    margin-top: 30px;
+  }
+  
+  .admin-subtitle {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+  }
+  
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: visible;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    font-size: 15px;
+    text-align: center;
+    position: relative;
+    overflow: visible;
+  }
+  
+  .admin-table th {
+    background-color: #f0f4f8;
+    font-weight: 600;
+  }
+  
+  .empty-msg {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+  }
+  
+  /* כפתור סטטוס */
+  .status-display {
+    font-weight: bold;
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid black;
+    min-width: 70px;
+    background-color: #e0e0e0;
+  }
+  
+  .status-display.green {
+    color: white;
+    background-color: #4caf50;
+  }
+  
+  .status-display.red {
+    color: white;
+    background-color: #f44336;
+  }
+  
+  .status-display.pending {
+    background-color: #f9f9f9;
+    color: #444;
+  }
+  
+  /* חלונית הסטטוס */
+  .status-popup {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+    border-radius: 6px;
+    padding: 6px;
+    z-index: 9999;
+    min-width: 90px;
+    right: 0;
+  }
+  
+  .status-popup.up {
+    bottom: 100%;
+    margin-bottom: 6px;
+  }
+  
+  .status-popup.down {
+    top: 100%;
+    margin-top: 6px;
+  }
+  
+  .status-popup div {
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: right;
+  }
+  
+  .status-popup div:hover {
+    background-color: #f0f0f0;
+  }
+  
+  /* בר תפריט מקצועי */
+  .topbar-pro {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* הסר את הצל: */
+    box-shadow: none;
+    direction: ltr;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  
+  
+  .logo-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .logo-title .icon {
+    font-size: 18px;
+  }
+  
+  .topbar-buttons {
+    display: flex;
+    flex-wrap: wrap;     /* מונע חיתוך כפתורים */
+    gap: 16px;
+  }
+  
+  .topbar-buttons a {
+    color: #0077cc;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.3s;
+    font-size: 14px;
+    white-space: nowrap; /* מונע חיתוך טקסט כמו "יציאה" */
+  }
+  
+  .topbar-buttons a:hover {
+    color: #005fa3;
+    text-decoration: underline;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9 !important;
+  }

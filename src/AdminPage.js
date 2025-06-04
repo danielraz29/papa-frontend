@@ -1,4 +1,4 @@
-import './AdminPage.css';
+import styles from './AdminPage.module.css';
 import { Link } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap, FaUsers } from 'react-icons/fa';
@@ -72,50 +72,43 @@ function AdminPage() {
       .catch(err => console.error('שגיאה בעדכון:', err));
   };
 
-  // ✅ exportMeetings – ייצוא אקסל עם שם שמגיע מהשרת (ללא @)
- const exportMeetings = async (userName) => {
-  try {
-    const response = await fetch('https://papa-backend.onrender.com/api/meetings-by-mentor', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userName })
-    });
+  const exportMeetings = async (userName) => {
+    try {
+      const response = await fetch('https://papa-backend.onrender.com/api/meetings-by-mentor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userName })
+      });
 
-    console.log("📦 סטטוס תגובה מהשרת:", response.status);
-    console.log("🧾 Content-Type מהשרת:", response.headers.get("Content-Type"));
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("❌ תוכן השגיאה:", errorText);
+        throw new Error("שגיאה בשרת");
+      }
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ תוכן השגיאה:", errorText);
-      throw new Error("שגיאה בשרת");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute("download", "");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("שגיאה ביצוא מפגשים:", error);
+      alert("לא הצלחנו לייצא את הקובץ 😢");
     }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.setAttribute("download", ""); // ← השם יגיע מהשרת
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("שגיאה ביצוא מפגשים:", error);
-    alert("לא הצלחנו לייצא את הקובץ 😢");
-  }
-};
-
+  };
 
   return (
-    <div className="admin-layout">
-      <nav className="topbar-pro">
-        <div className="logo-title">
-          <FaGraduationCap className="icon" />
+    <div className={styles.adminLayout}>
+      <nav className={styles.topbarPro}>
+        <div className={styles.logoTitle}>
+          <FaGraduationCap className={styles.icon} />
           <span>מערכת שיבוץ חונכות</span>
         </div>
-        <div className="topbar-buttons">
+        <div className={styles.topbarButtons}>
           <a href="#"><FaSignOutAlt /> יציאה</a>
           <Link to="/trainees"><FaUsers /> חניכים</Link>
           <a href="#"><FaUser /> הפרופיל שלי</a>
@@ -123,13 +116,13 @@ function AdminPage() {
         </div>
       </nav>
 
-      <main className="admin-wrapper">
+      <main className={styles.adminWrapper}>
         <h1>ניהול בקשות לחונכות 🛠</h1>
-        <p className="admin-subtitle">
+        <p className={styles.adminSubtitle}>
           בדף זה מוצגות כל הבקשות מסטודנטים שמעוניינים להפוך לחונכים.
         </p>
 
-        <table className="admin-table">
+        <table className={styles.adminTable}>
           <thead>
             <tr>
               <th>שם מלא</th>
@@ -167,27 +160,29 @@ function AdminPage() {
                 </td>
                 <td style={{ position: 'relative' }}>
                   <button
-                    className={`status-display ${
+                    className={`${styles.statusDisplay} ${
                       req.status === "פעיל"
-                        ? 'green'
+                        ? styles.green
                         : req.status === "לא פעיל"
-                        ? 'red'
-                        : 'pending'
+                        ? styles.red
+                        : styles.pending
                     }`}
                     onClick={() => togglePopup(index)}
                   >
                     {req.status || 'ממתין לאישור'}
                   </button>
                   {openIndex === index && (
-                    <div className={`status-popup ${openDirection}`}>
+                    <div className={`${styles.statusPopup} ${styles[openDirection]}`}>
                       <div onClick={() => selectStatus(index, "פעיל")}>✅ פעיל</div>
                       <div onClick={() => selectStatus(index, "לא פעיל")}>❌ לא פעיל</div>
-                      <div onClick={() => selectStatus(index, "ממתין לאישור ⏳")}>⏳ ממתין לאישור</div>
+                      <div onClick={() => selectStatus(index, "ממתין לאישור ⏳")}>
+                        ⏳ ממתין לאישור
+                      </div>
                     </div>
                   )}
                 </td>
                 <td>
-                  <button className="export-btn" onClick={() => exportMeetings(req.userName)}>
+                  <button className={styles.exportBtn} onClick={() => exportMeetings(req.userName)}>
                     ייצוא מפגשים
                   </button>
                 </td>

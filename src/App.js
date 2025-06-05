@@ -7,6 +7,7 @@ import AdminPage from './AdminPage';
 import MentorHomePage from './MentorHomePage';
 import MentorSwipe from './MentorSwipe'; 
 import TraineesPage from './TraineesPage'; 
+import MentorDashboard from './MentorDashboard'; 
 
 
 function App() {
@@ -18,9 +19,9 @@ function App() {
          <Route path="/dashboard/admin" element={<AdminPage />} />
         <Route path="/trainees" element={<TraineesPage />} />
          <Route path="/dashboard/mentor" element={<MentorHomePage />} />
-
         <Route path="/mentor-request" element={<MentorRequest />} />
         <Route path="/mentor-swipe" element={<MentorSwipe />} />
+        <Route path="/dashboard/mentor" element={<MentorDashboard />} />
       </Routes>
     </Router>
   );

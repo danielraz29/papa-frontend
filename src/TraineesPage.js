@@ -1,6 +1,7 @@
 import styles from './TraineesPage.module.css';
 import React, { useEffect, useState } from 'react';
 import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap, FaUsers, FaPlus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 function TraineesPage() {
   const [trainees, setTrainees] = useState([]);
@@ -15,15 +16,17 @@ function TraineesPage() {
     menteeHourQuota: 30
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    fetch('/api/mentees')
+    fetch('https://papa-backend.onrender.com/api/mentees')
       .then(res => res.json())
       .then(data => setTrainees(data))
       .catch(() => setTrainees([]));
   }, []);
 
   const handleCreateUser = () => {
-    fetch('/api/create-mentee', {
+    fetch('https://papa-backend.onrender.com/api/create-mentee', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newUser)
@@ -33,7 +36,15 @@ function TraineesPage() {
         alert(`החניך נוסף בהצלחה! הסיסמה שלו היא: ${data.password}`);
         setTrainees([...trainees, data]);
         setShowForm(false);
-        setNewUser({ fullName: '', idNumber: '', userName: '', phoneNumber: '', school: '', studyYear: '', menteeHourQuota: 30 });
+        setNewUser({
+          fullName: '',
+          idNumber: '',
+          userName: '',
+          phoneNumber: '',
+          school: '',
+          studyYear: '',
+          menteeHourQuota: 30
+        });
       })
       .catch(() => alert("לא הצלחנו להוסיף את החניך :("));
   };
@@ -46,16 +57,18 @@ function TraineesPage() {
           <span>מערכת שיבוץ חונכות</span>
         </div>
         <div className={styles.topbarButtons}>
-          <a href="/"><FaHome /> דף בית</a>
-          <a href="#"><FaUser /> הפרופיל שלי</a>
-          <a href="/dashboard/admin"><FaUsers /> חזרה לניהול</a>
+          <button onClick={() => navigate('/')}><FaHome /> דף בית</button>
+          <button><FaUser /> הפרופיל שלי</button>
+          <button onClick={() => navigate('/dashboard/admin')}><FaUsers /> חזרה לניהול</button>
         </div>
       </nav>
 
       <main className={styles.traineesWrapper}>
         <div className={styles.headerRow}>
           <h1>חניכים 🎓</h1>
-          <button className={styles.addBtn} onClick={() => setShowForm(!showForm)}><FaPlus /> הוסף חניך</button>
+          <button className={styles.addBtn} onClick={() => setShowForm(!showForm)}>
+            <FaPlus /> הוסף חניך
+          </button>
         </div>
 
         {showForm && (
@@ -96,7 +109,7 @@ function TraineesPage() {
                   <td>{t.menteeHourQuota}</td>
                   <td>
                     <button className={styles.exportBtn} onClick={() => {
-                      fetch(`/api/export-matches/${t._id}`)
+                      fetch(`https://papa-backend.onrender.com/api/export-matches/${t._id}`)
                         .then((res) => res.blob())
                         .then((blob) => {
                           const url = window.URL.createObjectURL(blob);

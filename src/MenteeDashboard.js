@@ -166,7 +166,13 @@ function MenteeDashboard() {
             <div className={styles.calendarGrid}>
               {currentWeekDates.map((date, colIdx) => (
                 <div key={colIdx} className={styles.dayColumn}>
-                  {meetings.filter(m => new Date(m.startDateTime).toDateString() === date.toDateString()).map((m, idx) => (
+                  {meetings.filter(m => {
+  const meetingDate = new Date(m.startDateTime);
+  return meetingDate.getFullYear() === date.getFullYear() &&
+         meetingDate.getMonth() === date.getMonth() &&
+         meetingDate.getDate() === date.getDate();
+})
+.map((m, idx) => (
                     <div key={idx} className={styles.meetingBlock}>
                       <div className={styles.meetingInfo}>
                         <div className={styles.meetingHeader}>

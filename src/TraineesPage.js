@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function TraineesPage() {
   const [trainees, setTrainees] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [loggedUser, setLoggedUser] = useState(null);
   const [newUser, setNewUser] = useState({
     fullName: '',
     idNumber: '',
@@ -19,11 +20,19 @@ function TraineesPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      navigate("/");  // אם לא מחובר - מחזיר לדף הבית
+      return;
+    }
+
+    setLoggedUser(user);
+
     fetch('https://papa-backend.onrender.com/api/mentees')
       .then(res => res.json())
       .then(data => setTrainees(data))
       .catch(() => setTrainees([]));
-  }, []);
+  }, [navigate]);
 
   const handleCreateUser = () => {
     fetch('https://papa-backend.onrender.com/api/create-mentee', {
@@ -49,6 +58,11 @@ function TraineesPage() {
       .catch(() => alert("לא הצלחנו להוסיף את החניך :("));
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
     <div className={styles.traineesLayout}>
       <nav className={styles.topbarPro}>
@@ -60,6 +74,7 @@ function TraineesPage() {
           <button onClick={() => navigate('/')}><FaHome /> דף בית</button>
           <button><FaUser /> הפרופיל שלי</button>
           <button onClick={() => navigate('/dashboard/admin')}><FaUsers /> חזרה לניהול</button>
+          <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
         </div>
       </nav>
 

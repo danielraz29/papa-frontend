@@ -18,7 +18,6 @@ function App() {
         <Route path="/dashboard/mentee" element={<MenteeDashboard />} />
          <Route path="/dashboard/admin" element={<AdminPage />} />
         <Route path="/trainees" element={<TraineesPage />} />
-         <Route path="/dashboard/mentor" element={<MentorHomePage />} />
         <Route path="/mentor-request" element={<MentorRequest />} />
         <Route path="/mentor-swipe" element={<MentorSwipe />} />
         <Route path="/dashboard/mentor" element={<MentorDashboard />} />

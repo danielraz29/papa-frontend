@@ -72,10 +72,12 @@
   background-color: #005fa3;
 }
 
+/* ===== סרגל עליון - תוקן direction + יישור ===== */
 .topbarPro {
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
+  left: unset;
   width: 100%;
   background-color: #ffffff;
   padding: 10px 16px;
@@ -83,7 +85,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: none;
-  direction: ltr;
+  direction: rtl;
   z-index: 1000;
   box-sizing: border-box;
 }
@@ -101,13 +103,15 @@
   font-size: 18px;
 }
 
+/* כולל כפתורים וגם קישורים */
 .topbarButtons {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
 }
 
-.topbarButtons a {
+.topbarButtons a,
+.topbarButtons button {
   color: #0077cc;
   font-weight: 500;
   text-decoration: none;
@@ -117,60 +121,15 @@
   transition: 0.3s;
   font-size: 14px;
   white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.topbarButtons a:hover {
+.topbarButtons a:hover,
+.topbarButtons button:hover {
   color: #005fa3;
   text-decoration: underline;
 }
 
-.addBtn {
-  background-color: #1e3a8a;
-  color: white;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.addBtn:hover {
-  background-color: #162e66;
-}
-
-.formSection {
-  background: #ffffff;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-}
-
-.formSection input {
-  padding: 8px 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.saveBtn {
-  grid-column: 1 / -1;
-  background-color: #0077cc;
-  color: white;
-  border: none;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.saveBtn:hover {
-  background-color: #005fa3;
-}
+/

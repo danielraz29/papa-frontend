@@ -120,8 +120,11 @@ function AdminPage() {
           <FaGraduationCap className={styles.icon} />
           <span>מערכת שיבוץ חונכות</span>
         </div>
-        <div className={styles.topbarButtons}>
-          <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
+        <div className={styles.topbarButtons}> 
+          <a onClick={handleLogout} className={styles.topbarLink} style={{ cursor: 'pointer' }}>
+  <FaSignOutAlt /> יציאה
+</a>
+
           <Link to="/trainees"><FaUsers /> חניכים</Link>
           <a href="#"><FaUser /> הפרופיל שלי</a>
           <a href="#"><FaHome /> דף בית</a>

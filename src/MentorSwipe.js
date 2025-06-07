@@ -102,9 +102,19 @@ const navigate = useNavigate();
   <nav className="bg-white shadow p-4 flex justify-between items-center px-8" dir="rtl">
   {/* צד ימין (קישורים) */}
   <div className="flex gap-4 text-sm text-blue-600 items-center">
-    <a href="/dashboard/mentee" className="flex items-center gap-1 hover:underline"><FaHome /> דף בית</a>
-    <a href="#" className="flex items-center gap-1 hover:underline"><FaUser /> הפרופיל שלי</a>
-    <a href="/" className="flex items-center gap-1 hover:underline"><FaSignOutAlt /> יציאה</a>
+   <button onClick={() => navigate('/dashboard/mentee')} className="flex items-center gap-1 hover:underline">
+  <FaHome /> דף בית
+</button>
+<button onClick={() => navigate('/profile')} className="flex items-center gap-1 hover:underline">
+  <FaUser /> הפרופיל שלי
+</button>
+<button onClick={() => {
+  localStorage.removeItem("user");
+  navigate('/');
+}} className="flex items-center gap-1 hover:underline">
+  <FaSignOutAlt /> יציאה
+</button>
+
   </div>
 
   {/* צד שמאל (כותרת) */}

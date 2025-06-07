@@ -1,4 +1,4 @@
-import './TraineesPage.css';
+import styles from './TraineesPage.module.css';
 import React, { useEffect, useState } from 'react';
 import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap, FaUsers, FaPlus } from 'react-icons/fa';
 
@@ -16,69 +16,61 @@ function TraineesPage() {
   });
 
   useEffect(() => {
-    fetch('https://papa-backend.onrender.com/api/mentees')
+    fetch('/api/mentees')
       .then(res => res.json())
-      .then(data => {
-        console.log("🎓 חניכים שהתקבלו מהשרת:", data);
-        setTrainees(data);
-      })
-      .catch(err => {
-        console.error("שגיאה בטעינת חניכים:", err);
-        setTrainees([]);
-      });
+      .then(data => setTrainees(data))
+      .catch(() => setTrainees([]));
   }, []);
 
   const handleCreateUser = () => {
-    fetch('https://papa-backend.onrender.com/api/create-mentee', {
+    fetch('/api/create-mentee', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newUser)
     })
       .then(res => res.json())
       .then(data => {
-        alert("החניך נוסף בהצלחה!");
+        alert(`החניך נוסף בהצלחה! הסיסמה שלו היא: ${data.password}`);
         setTrainees([...trainees, data]);
         setShowForm(false);
         setNewUser({ fullName: '', idNumber: '', userName: '', phoneNumber: '', school: '', studyYear: '', menteeHourQuota: 30 });
       })
-      .catch(err => {
-        console.error("שגיאה ביצירת משתמש:", err);
-        alert("לא הצלחנו להוסיף את החניך :(");
-      });
+      .catch(() => alert("לא הצלחנו להוסיף את החניך :("));
   };
 
   return (
-    <div className="trainees-layout">
-      <nav className="topbar-pro">
-        <div className="logo-title">
-          <FaGraduationCap className="icon" />
+    <div className={styles.traineesLayout}>
+      <nav className={styles.topbarPro}>
+        <div className={styles.logoTitle}>
+          <FaGraduationCap className={styles.icon} />
           <span>מערכת שיבוץ חונכות</span>
         </div>
-        <div className="topbar-buttons">
+        <div className={styles.topbarButtons}>
           <a href="/"><FaHome /> דף בית</a>
           <a href="#"><FaUser /> הפרופיל שלי</a>
-          <a href="#" onClick={(e) => { e.preventDefault(); window.location.href = "/dashboard/admin"; }}><FaUsers /> חזרה לניהול</a>
+          <a href="/dashboard/admin"><FaUsers /> חזרה לניהול</a>
         </div>
       </nav>
 
-      <main className="trainees-wrapper">
-        <h1>חניכים 🎓</h1>
-
-        <button className="add-btn" onClick={() => setShowForm(!showForm)}><FaPlus /> הוסף חניך</button>
+      <main className={styles.traineesWrapper}>
+        <div className={styles.headerRow}>
+          <h1>חניכים 🎓</h1>
+          <button className={styles.addBtn} onClick={() => setShowForm(!showForm)}><FaPlus /> הוסף חניך</button>
+        </div>
 
         {showForm && (
-          <div className="form-section">
+          <div className={styles.formSection}>
             <input placeholder="שם מלא" value={newUser.fullName} onChange={e => setNewUser({ ...newUser, fullName: e.target.value })} />
             <input placeholder="תעודת זהות" value={newUser.idNumber} onChange={e => setNewUser({ ...newUser, idNumber: e.target.value })} />
             <input placeholder="מייל" value={newUser.userName} onChange={e => setNewUser({ ...newUser, userName: e.target.value })} />
             <input placeholder="טלפון" value={newUser.phoneNumber} onChange={e => setNewUser({ ...newUser, phoneNumber: e.target.value })} />
             <input placeholder="תואר" value={newUser.school} onChange={e => setNewUser({ ...newUser, school: e.target.value })} />
             <input placeholder="שנת לימודים" value={newUser.studyYear} onChange={e => setNewUser({ ...newUser, studyYear: e.target.value })} />
-            <button onClick={handleCreateUser}>שמור</button>
+            <button className={styles.saveBtn} onClick={handleCreateUser}>שמור</button>
           </div>
         )}
 
-        <table className="trainees-table">
+        <table className={styles.traineesTable}>
           <thead>
             <tr>
               <th>שם מלא</th>
@@ -103,21 +95,18 @@ function TraineesPage() {
                   <td>{t.studyYear}</td>
                   <td>{t.menteeHourQuota}</td>
                   <td>
-                    <button
-                      className="export-btn"
-                      onClick={() => {
-                        fetch(`https://papa-backend.onrender.com/api/export-matches/${t._id}`)
-                          .then((res) => res.blob())
-                          .then((blob) => {
-                            const url = window.URL.createObjectURL(blob);
-                            const a = document.createElement("a");
-                            a.href = url;
-                            a.download = `שיבוץ_${t.fullName}.xlsx`;
-                            a.click();
-                          })
-                          .catch((err) => console.error("שגיאה ביצוא שיבוצים:", err));
-                      }}
-                    >
+                    <button className={styles.exportBtn} onClick={() => {
+                      fetch(`/api/export-matches/${t._id}`)
+                        .then((res) => res.blob())
+                        .then((blob) => {
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = `שיבוץ_${t.fullName}.xlsx`;
+                          a.click();
+                        })
+                        .catch((err) => console.error("שגיאה ביצוא שיבוצים:", err));
+                    }}>
                       ייצוא שיבוצים
                     </button>
                   </td>
@@ -125,7 +114,7 @@ function TraineesPage() {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="empty-msg">לא נמצאו חניכים</td>
+                <td colSpan="8" className={styles.emptyMsg}>לא נמצאו חניכים</td>
               </tr>
             )}
           </tbody>

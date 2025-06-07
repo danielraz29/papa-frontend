@@ -15,6 +15,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  direction: ltr; /* הפוך לכיוון כפתורים מימין */
 }
 
 .navTitle {
@@ -24,12 +25,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-right: auto; /* דוחף שמאלה */
 }
 
 .navLinks {
   display: flex;
   gap: 24px;
+  margin-left: auto; /* דוחף ימינה */
+  direction: rtl; /* כדי שהכפתורים יהיו מימין לשמאל */
 }
+
 
 .navLinks button {
   background: none;

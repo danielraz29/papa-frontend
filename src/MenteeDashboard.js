@@ -126,15 +126,16 @@ function MenteeDashboard() {
 
   return (
     <div className={styles.dashboardWrapper}>
-      <nav className={styles.navbar}>
-        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
-        <div className={styles.navLinks}>
-          <button onClick={() => navigate('/dashboard/mentee')}><FaHome /> דף בית</button>
-          <button onClick={() => navigate('/profile')}><FaUser /> הפרופיל שלי</button>
-          <button onClick={handleSwipe}><FaSearch /> חפש חניך</button>
-          <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
-        </div>
-      </nav>
+     <nav className={styles.navbar}>
+  <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
+  <div className={styles.navLinks}>
+    <button onClick={() => navigate('/dashboard/mentee')}><FaHome /> דף בית</button>
+    <button onClick={() => navigate('/profile')}><FaUser /> הפרופיל שלי</button>
+    <button onClick={handleSwipe}><FaSearch /> חפש חניך</button>
+    <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
+  </div>
+</nav>
+
 
       <main className={styles.mainContent}>
         {!hasMentor ? (

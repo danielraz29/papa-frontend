@@ -1,5 +1,5 @@
 import styles from './AdminPage.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap, FaUsers } from 'react-icons/fa';
 
@@ -8,8 +8,15 @@ function AdminPage() {
   const [openIndex, setOpenIndex] = useState(null);
   const [openDirection, setOpenDirection] = useState("down");
   const rowRefs = useRef([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      navigate("/");
+      return;
+    }
+
     fetch('https://papa-backend.onrender.com/api/mentors')
       .then(res => res.json())
       .then(data => {
@@ -24,7 +31,7 @@ function AdminPage() {
         console.error("שגיאה בטעינה מהשרת:", err);
         setRequests([]);
       });
-  }, []);
+  }, [navigate]);
 
   const togglePopup = (index) => {
     if (openIndex === index) {
@@ -101,6 +108,11 @@ function AdminPage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
     <div className={styles.adminLayout}>
       <nav className={styles.topbarPro}>
@@ -109,7 +121,7 @@ function AdminPage() {
           <span>מערכת שיבוץ חונכות</span>
         </div>
         <div className={styles.topbarButtons}>
-          <a href="#"><FaSignOutAlt /> יציאה</a>
+          <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
           <Link to="/trainees"><FaUsers /> חניכים</Link>
           <a href="#"><FaUser /> הפרופיל שלי</a>
           <a href="#"><FaHome /> דף בית</a>
@@ -175,9 +187,7 @@ function AdminPage() {
                     <div className={`${styles.statusPopup} ${styles[openDirection]}`}>
                       <div onClick={() => selectStatus(index, "פעיל")}>✅ פעיל</div>
                       <div onClick={() => selectStatus(index, "לא פעיל")}>❌ לא פעיל</div>
-                      <div onClick={() => selectStatus(index, "ממתין לאישור ⏳")}>
-                        ⏳ ממתין לאישור
-                      </div>
+                      <div onClick={() => selectStatus(index, "ממתין לאישור ⏳")}>⏳ ממתין לאישור</div>
                     </div>
                   )}
                 </td>

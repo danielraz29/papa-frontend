@@ -10,6 +10,12 @@ function AdminPage() {
   const rowRefs = useRef([]);
   const navigate = useNavigate();
 
+  const statusMap = {
+    active: "פעיל ✅",
+    inactive: "לא פעיל ❌",
+    pending: "ממתין לאישור ⏳"
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user || user.role !== "admin") {
@@ -23,7 +29,7 @@ function AdminPage() {
         if (Array.isArray(data)) {
           setRequests(data);
         } else {
-          console.error("לא קיבלתי מערך! הנתון שהגיע:", data);
+          console.error("לא קיבלתי מערך!", data);
           setRequests([]);
         }
       })
@@ -89,8 +95,12 @@ function AdminPage() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ תוכן השגיאה:", errorText);
-        throw new Error("שגיאה בשרת");
+        if (errorText.includes("No meetings found")) {
+          alert("לחונך זה עדיין אין לו מפגשים עדין");
+        } else {
+          alert("שגיאה לא צפויה בשירת");
+        }
+        throw new Error("Server error");
       }
 
       const blob = await response.blob();
@@ -104,7 +114,6 @@ function AdminPage() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("שגיאה ביצוא מפגשים:", error);
-      alert("לא הצלחנו לייצא את הקובץ 😢");
     }
   };
 
@@ -122,9 +131,8 @@ function AdminPage() {
         </div>
         <div className={styles.topbarButtons}> 
           <a onClick={handleLogout} className={styles.topbarLink} style={{ cursor: 'pointer' }}>
-  <FaSignOutAlt /> יציאה
-</a>
-
+            <FaSignOutAlt /> יציאה
+          </a>
           <Link to="/trainees"><FaUsers /> חניכים</Link>
           <a href="#"><FaUser /> הפרופיל שלי</a>
           <a href="#"><FaHome /> דף בית</a>
@@ -166,14 +174,9 @@ function AdminPage() {
                 </td>
                 <td>
                   {req.cvUrl ? (
-                   <a
-  href={`https://papa-mentor-app.onrender.com/${req.cvUrl}`}
-  target="_blank"
-  rel="noreferrer"
->
-  📄 צפייה ב־PDF
-</a>
-
+                    <a href={`https://papa-backend.onrender.com/${req.cvUrl}`} target="_blank" rel="noreferrer">
+                      📄 צפייה ב־PDF
+                    </a>
                   ) : (
                     <span style={{ color: "gray" }}>אין קובץ</span>
                   )}
@@ -181,15 +184,15 @@ function AdminPage() {
                 <td style={{ position: 'relative' }}>
                   <button
                     className={`${styles.statusDisplay} ${
-                      req.status === "פעיל"
+                      req.status === "active"
                         ? styles.green
-                        : req.status === "לא פעיל"
+                        : req.status === "inactive"
                         ? styles.red
                         : styles.pending
                     }`}
                     onClick={() => togglePopup(index)}
                   >
-                    {req.status || 'ממתין לאישור'}
+                    {statusMap[req.status] || req.status}
                   </button>
                   {openIndex === index && (
                     <div className={`${styles.statusPopup} ${styles[openDirection]}`}>

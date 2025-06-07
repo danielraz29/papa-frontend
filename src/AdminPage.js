@@ -163,9 +163,14 @@ function AdminPage() {
                 </td>
                 <td>
                   {req.cvUrl ? (
-                    <a href={req.cvUrl} target="_blank" rel="noreferrer">
-                      📄 צפייה ב־PDF
-                    </a>
+                   <a
+  href={`https://papa-mentor-app.onrender.com/${req.cvUrl}`}
+  target="_blank"
+  rel="noreferrer"
+>
+  📄 צפייה ב־PDF
+</a>
+
                   ) : (
                     <span style={{ color: "gray" }}>אין קובץ</span>
                   )}

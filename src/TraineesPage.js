@@ -65,18 +65,19 @@ function TraineesPage() {
 
   return (
     <div className={styles.traineesLayout}>
-     <nav className={styles.topbarPro}>
+    <nav className={styles.topbarPro}>
+  <div className={styles.logoTitle}>
+    <FaGraduationCap className={styles.icon} />
+    <span>מערכת שיבוץ חונכות</span>
+  </div>
   <div className={styles.topbarButtons}>
     <button onClick={() => navigate('/')}><FaHome /> דף בית</button>
     <button><FaUser /> הפרופיל שלי</button>
     <button onClick={() => navigate('/dashboard/admin')}><FaUsers /> חזרה לניהול</button>
     <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
   </div>
-  <div className={styles.logoTitle}>
-    <FaGraduationCap className={styles.icon} />
-    <span>מערכת שיבוץ חונכות</span>
-  </div>
 </nav>
+
 
 
       <main className={styles.traineesWrapper}>

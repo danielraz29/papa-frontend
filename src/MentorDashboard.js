@@ -199,17 +199,18 @@ function MentorDashboard() {
                 onChange={e => setNewMeeting({ ...newMeeting, summary: e.target.value })}
               />
 
-              <label>בחר חניך</label>
-              <select
-                className={styles.input}
-                value={newMeeting.menteeId}
-                onChange={e => setNewMeeting({ ...newMeeting, menteeId: e.target.value })}
-              >
-                <option value="">-- בחר חניך --</option>
-                {mentees.map((m, idx) => (
-                  <option key={idx} value={m.menteeId}>{m.fullName}</option>
-                ))}
-              </select>
+             <label>בחר חניך</label>
+<select
+  className={styles.input}
+  value={newMeeting.menteeId}
+  onChange={e => setNewMeeting({ ...newMeeting, menteeId: e.target.value })}
+>
+  <option value="">-- בחר חניך --</option>
+  {mentees.map((m, idx) => (
+    <option key={idx} value={m.menteeId}>{m.fullName}</option>
+  ))}
+</select>
+
 
               <div className={styles.dateRow}>
                 <div>

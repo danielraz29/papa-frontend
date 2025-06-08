@@ -117,14 +117,14 @@ function MentorDashboard() {
 
   return (
     <div className={styles.dashboardWrapper}>
-      <nav className={styles.navbar}>
-        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
-        <div className={styles.navLinks}>
+      <nav className={styles.navbar} style={{ flexDirection: 'row-reverse', justifyContent: 'space-between' }}>
+        <div className={styles.navLinks} style={{ display: 'flex', gap: '12px' }}>
           <button><FaHome /> דף בית</button>
           <button><FaUser /> הפרופיל שלי</button>
           <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
           <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
         </div>
+        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
       </nav>
 
       <main className={styles.mainContent}>

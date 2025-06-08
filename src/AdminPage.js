@@ -87,15 +87,13 @@ function AdminPage() {
 
   const exportMeetings = async (mentorId) => {
     try {
-      const response = await fetch('https://papa-backend.onrender.com/api/meetings-by-mentor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mentorId }) // שליחת ID במקום userName
+      const response = await fetch(`https://papa-backend.onrender.com/api/export-meetings/${mentorId}`, {
+        method: 'GET',
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        if (errorText.includes("No meetings found")) {
+        if (errorText.includes("לא נמצאו מפגשים")) {
           alert("לחונך זה עדיין אין מפגשים");
         } else {
           alert("שגיאה לא צפויה בשרת");
@@ -107,7 +105,7 @@ function AdminPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.setAttribute("download", "");
+      a.setAttribute("download", `מפגשים_${mentorId}.xlsx`);
       document.body.appendChild(a);
       a.click();
       a.remove();

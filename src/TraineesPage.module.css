@@ -85,6 +85,8 @@
   direction: rtl;
   z-index: 1000;
   box-sizing: border-box;
+  flex-direction: row-reverse;
+
 }
 
 .logoTitle {

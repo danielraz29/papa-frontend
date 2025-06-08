@@ -1,128 +1,219 @@
-from fastapi import APIRouter, HTTPException
-from db import users, meetings
-from typing import Dict
-import random
-import string
-from utils.email_util import send_email
-from bson import ObjectId
-from fastapi.responses import FileResponse
-import pandas as pd
-import os
+import styles from './AdminPage.module.css';
+import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaHome, FaUser, FaSignOutAlt, FaGraduationCap, FaUsers } from 'react-icons/fa';
 
-router = APIRouter()
+function AdminPage() {
+  const [requests, setRequests] = useState([]);
+  const [openIndex, setOpenIndex] = useState(null);
+  const [openDirection, setOpenDirection] = useState("down");
+  const rowRefs = useRef([]);
+  const navigate = useNavigate();
 
+  const statusMap = {
+    active: "פעיל ✅",
+    inactive: "לא פעיל ❌",
+    pending: "ממתין לאישור ⏳"
+  };
 
-def generate_password():
-    letters = ''.join(random.choices(string.ascii_uppercase, k=4))
-    digits = ''.join(random.choices(string.digits, k=4))
-    return letters + digits
-
-
-@router.get("/api/mentors")
-def get_mentors():
-    mentors = list(users.find({"role": "mentor"}))
-    for mentor in mentors:
-        mentor["_id"] = str(mentor["_id"])
-        mentor.setdefault("fullName", "")
-        mentor.setdefault("idNumber", "")
-        mentor.setdefault("userName", "")
-        mentor.setdefault("phoneNumber", "")
-        mentor.setdefault("school", "")
-        mentor.setdefault("averageGrade", "")
-        mentor.setdefault("availableDays", [])
-        mentor.setdefault("availableHours", [])
-        mentor.setdefault("cvUrl", "")
-        mentor.setdefault("status", "")
-    return mentors
-
-
-@router.post("/api/update-status")
-def update_status(payload: Dict):
-    print("📨 הגיע בקשת עדכון סטטוס:")
-    print("payload:", payload)
-
-    user_name = payload.get("userName")
-    new_status_raw = payload.get("status")
-
-    status_map = {
-        "פעיל": "active",
-        "לא פעיל": "inactive",
-        "ממתין לאישור ⏳": "pending"
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user || user.role !== "admin") {
+      navigate("/");
+      return;
     }
 
-    new_status = status_map.get(new_status_raw, new_status_raw)
+    fetch('https://papa-backend.onrender.com/api/mentors')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setRequests(data);
+        } else {
+          console.error("לא קיבלתי מערך!", data);
+          setRequests([]);
+        }
+      })
+      .catch(err => {
+        console.error("שגיאה בטעינה מהשרת:", err);
+        setRequests([]);
+      });
+  }, [navigate]);
 
-    if not user_name or not new_status:
-        raise HTTPException(status_code=400, detail="חסר userName או סטטוס")
+  const togglePopup = (index) => {
+    if (openIndex === index) {
+      setOpenIndex(null);
+      return;
+    }
 
-    result = users.update_one(
-        {"userName": user_name},
-        {"$set": {"status": new_status}}
-    )
+    const row = rowRefs.current[index];
+    if (row) {
+      const rect = row.getBoundingClientRect();
+      const spaceAbove = rect.top;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const openUp = spaceAbove > spaceBelow;
+      setOpenDirection(openUp ? 'up' : 'down');
+    }
 
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="משתמש לא נמצא")
+    setOpenIndex(index);
+  };
 
-    if new_status == "active":
-        mentor = users.find_one({"userName": user_name})
-        if mentor and mentor.get("gmail"):
-            password = generate_password()
-            users.update_one({"userName": user_name}, {"$set": {"password": password}})
-            try:
-                send_email(
-                    to_email=mentor["gmail"],
-                    subject="פרטי התחברות למערכת פאפה",
-                    body=f"""שלום {mentor.get('fullName', '')},
+  const selectStatus = (index, newStatus) => {
+    const selected = requests[index];
+    const payload = {
+      fullName: selected.fullName,
+      userName: selected.userName,
+      phone: selected.phoneNumber,
+      degree: selected.school,
+      avgScore: selected.averageGrade,
+      availability: `${selected.availableDays?.join(", ")} | ${selected.availableHours?.join(", ")}`,
+      days: selected.availableDays,
+      status: newStatus
+    };
 
-הסטטוס שלך עודכן ל־פעיל במערכת החונכות של פאפה.
-הסיסמה שלך להתחברות היא: {password}
+    fetch('https://papa-backend.onrender.com/api/update-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(res => res.json())
+      .then(() => {
+        const updated = [...requests];
+        updated[index].status = newStatus;
+        setRequests(updated);
+        setOpenIndex(null);
+      })
+      .catch(err => console.error('שגיאה בעדכון:', err));
+  };
 
-בהצלחה!
-צוות פאפה
-"""
-                )
-            except Exception as e:
-                print("❌ שגיאה בשליחת מייל:", str(e))
+  const exportMeetings = async (userName) => {
+    try {
+      const response = await fetch('https://papa-backend.onrender.com/api/meetings-by-mentor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userName })
+      });
 
-    return {"message": "הסטטוס עודכן בהצלחה"}
+      if (!response.ok) {
+        const errorText = await response.text();
+        if (errorText.includes("No meetings found")) {
+          alert("לחונך זה עדיין אין לו מפגשים עדין");
+        } else {
+          alert("שגיאה לא צפויה בשירת");
+        }
+        throw new Error("Server error");
+      }
 
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute("download", "");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("שגיאה ביצוא מפגשים:", error);
+    }
+  };
 
-@router.post("/api/meetings-by-mentor")
-def export_meetings_by_mentor(payload: Dict):
-    user_name = payload.get("userName")
-    if not user_name:
-        raise HTTPException(status_code=400, detail="userName is required")
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/");
+  };
 
-    mentor = users.find_one({"userName": user_name})
-    if not mentor:
-        raise HTTPException(status_code=404, detail="Mentor not found")
+  return (
+    <div className={styles.adminLayout}>
+      <nav className={styles.topbarPro}>
+        <div className={styles.logoTitle}>
+          <FaGraduationCap className={styles.icon} />
+          <span>מערכת שיבוץ חונכות</span>
+        </div>
+        <div className={styles.topbarButtons}> 
+          <a onClick={handleLogout} className={styles.topbarLink} style={{ cursor: 'pointer' }}>
+            <FaSignOutAlt /> יציאה
+          </a>
+          <Link to="/trainees"><FaUsers /> חניכים</Link>
+          <a href="#"><FaUser /> הפרופיל שלי</a>
+          <a href="#"><FaHome /> דף בית</a>
+        </div>
+      </nav>
 
-    mentor_id = mentor["_id"]
-    full_name = mentor.get("fullName", "")
+      <main className={styles.adminWrapper}>
+        <h1>ניהול בקשות לחונכות 🛠</h1>
+        <p className={styles.adminSubtitle}>
+          בדף זה מוצגות כל הבקשות מסטודנטים שמעוניינים להפוך לחונכים.
+        </p>
 
-    results = list(meetings.find({"mentorId": mentor_id}))
-    if not results:
-        raise HTTPException(status_code=404, detail="No meetings found")
+        <table className={styles.adminTable}>
+          <thead>
+            <tr>
+              <th>שם מלא</th>
+              <th>תעודת זהות</th>
+              <th>מייל</th>
+              <th>טלפון</th>
+              <th>תחום התמחות</th>
+              <th>ציון ממוצע</th>
+              <th>זמינות</th>
+              <th>קישור לקו"ח</th>
+              <th>סטטוס</th>
+              <th>ייצוא מפגשים</th>
+            </tr>
+          </thead>
+          <tbody>
+            {requests.map((req, index) => (
+              <tr key={index} ref={(el) => (rowRefs.current[index] = el)}>
+                <td>{req.fullName}</td>
+                <td>{req.idNumber}</td>
+                <td>{req.userName}</td>
+                <td>{req.phoneNumber}</td>
+                <td>{req.school}</td>
+                <td>{req.averageGrade}</td>
+                <td>
+                  {(req.availableDays || []).join(", ")} | {(req.availableHours || []).join(", ")}
+                </td>
+                <td>
+                  {req.cvUrl ? (
+                    <a href={`https://papa-backend.onrender.com/${req.cvUrl}`} target="_blank" rel="noreferrer">
+                      📄 צפייה ב־PDF
+                    </a>
+                  ) : (
+                    <span style={{ color: "gray" }}>אין קובץ</span>
+                  )}
+                </td>
+                <td style={{ position: 'relative' }}>
+                  <button
+                    className={`${styles.statusDisplay} ${
+                      req.status === "active"
+                        ? styles.green
+                        : req.status === "inactive"
+                        ? styles.red
+                        : styles.pending
+                    }`}
+                    onClick={() => togglePopup(index)}
+                  >
+                    {statusMap[req.status] || req.status}
+                  </button>
+                  {openIndex === index && (
+                    <div className={`${styles.statusPopup} ${styles[openDirection]}`}>
+                      <div onClick={() => selectStatus(index, "פעיל")}>✅ פעיל</div>
+                      <div onClick={() => selectStatus(index, "לא פעיל")}>❌ לא פעיל</div>
+                      <div onClick={() => selectStatus(index, "ממתין לאישור ⏳")}>⏳ ממתין לאישור</div>
+                    </div>
+                  )}
+                </td>
+                <td>
+                  <button className={styles.exportBtn} onClick={() => exportMeetings(req.userName)}>
+                    ייצוא מפגשים
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </main>
+    </div>
+  );
+}
 
-    data = []
-    for m in results:
-        mentee = users.find_one({"_id": m["menteeId"]})
-        data.append({
-            "נושא": m.get("summary", ""),
-            "שם חונך": full_name,
-            "שם חניך": mentee.get("fullName", "") if mentee else "לא נמצא",
-            "תאריך התחלה": m.get("startDateTime"),
-            "תאריך סיום": m.get("endDateTime"),
-            "סטטוס": m.get("status", "לא ידוע")
-        })
-
-    filename = f"meetings_{user_name}.xlsx"
-    df = pd.DataFrame(data)
-    df.to_excel(filename, index=False)
-
-    print(f"✅ הקובץ נוצר בהצלחה: {filename}")
-    return FileResponse(
-        path=filename,
-        filename=filename,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+export default AdminPage;

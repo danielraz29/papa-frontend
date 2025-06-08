@@ -117,7 +117,7 @@ function MentorDashboard() {
 
   return (
     <div className={styles.dashboardWrapper}>
-      <nav className={styles.navbar}>
+    <nav className={styles.navbar}>
   <div className={styles.navTitle}>
     <FaCalendarAlt /> לוח חונכות אישי
   </div>
@@ -128,6 +128,7 @@ function MentorDashboard() {
     <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
   </div>
 </nav>
+
 
 
 

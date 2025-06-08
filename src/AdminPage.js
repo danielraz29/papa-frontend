@@ -85,20 +85,20 @@ function AdminPage() {
       .catch(err => console.error('שגיאה בעדכון:', err));
   };
 
-  const exportMeetings = async (userName) => {
+  const exportMeetings = async (mentorId) => {
     try {
       const response = await fetch('https://papa-backend.onrender.com/api/meetings-by-mentor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userName })
+        body: JSON.stringify({ mentorId }) // שליחת ID במקום userName
       });
 
       if (!response.ok) {
         const errorText = await response.text();
         if (errorText.includes("No meetings found")) {
-          alert("לחונך זה עדיין אין לו מפגשים עדין");
+          alert("לחונך זה עדיין אין מפגשים");
         } else {
-          alert("שגיאה לא צפויה בשירת");
+          alert("שגיאה לא צפויה בשרת");
         }
         throw new Error("Server error");
       }
@@ -129,7 +129,7 @@ function AdminPage() {
           <FaGraduationCap className={styles.icon} />
           <span>מערכת שיבוץ חונכות</span>
         </div>
-        <div className={styles.topbarButtons}> 
+        <div className={styles.topbarButtons}>
           <a onClick={handleLogout} className={styles.topbarLink} style={{ cursor: 'pointer' }}>
             <FaSignOutAlt /> יציאה
           </a>
@@ -203,7 +203,7 @@ function AdminPage() {
                   )}
                 </td>
                 <td>
-                  <button className={styles.exportBtn} onClick={() => exportMeetings(req.userName)}>
+                  <button className={styles.exportBtn} onClick={() => exportMeetings(req._id)}>
                     ייצוא מפגשים
                   </button>
                 </td>

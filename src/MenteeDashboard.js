@@ -14,10 +14,14 @@ import he from 'date-fns/locale/he';
 registerLocale('he', he);
 
 const getStartOfWeek = (date) => {
-  const start = new Date(date);
-  start.setDate(date.getDate() - ((start.getDay() + 6) % 7));
-  return start;
+  const d = new Date(date);
+  const day = d.getDay(); // 0-6 (0 = ראשון)
+  const diff = day === 0 ? 0 : -day; // אם היום ראשון, אל תזיז
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
 };
+
 
 function MenteeDashboard() {
   const [loggedUser, setLoggedUser] = useState(null);

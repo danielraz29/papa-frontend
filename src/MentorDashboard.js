@@ -12,7 +12,6 @@ import { registerLocale } from 'react-datepicker';
 import he from 'date-fns/locale/he';
 registerLocale('he', he);
 
-// ✅ כתובת הבקנד ברנדר
 const API_URL = "https://papa-backend.onrender.com";
 
 const getStartOfWeek = (date) => {
@@ -38,29 +37,29 @@ function MentorDashboard() {
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const userName = user?.name;
+  const userId = user?.id;
 
   useEffect(() => {
-    if (!userName) {
+    if (!userId) {
       navigate("/");
       return;
     }
 
-    fetch(`${API_URL}/api/mentor-name?userName=${userName}`)
+    fetch(`${API_URL}/api/mentor-name?userId=${userId}`)
       .then(res => res.json())
       .then(data => setMentorName(data.fullName || ""))
       .catch(() => setMentorName(""));
 
-    fetch(`${API_URL}/api/mentor-meetings?userName=${userName}`)
+    fetch(`${API_URL}/api/mentor-meetings?userId=${userId}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMeetings(data) : setMeetings([]))
       .catch(() => setMeetings([]));
 
-    fetch(`${API_URL}/api/mentor-assigned?userName=${userName}`)
+    fetch(`${API_URL}/api/mentor-assigned?userId=${userId}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMentees(data) : setMentees([]))
       .catch(() => setMentees([]));
-  }, [navigate, userName]);
+  }, [navigate, userId]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -77,7 +76,7 @@ function MentorDashboard() {
     }
 
     const meetingToSave = {
-      mentorId: user.id,
+      mentorId: userId,
       menteeId: newMeeting.menteeId,
       summary: newMeeting.summary,
       startDateTime: newMeeting.startDateTime,

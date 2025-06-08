@@ -4,7 +4,6 @@ import HomePage from "./HomePage";
 import MenteeDashboard from "./MenteeDashboard"; // במידה ורלוונטי
 import MentorRequest from './MentorRequest'; 
 import AdminPage from './AdminPage'; 
-import MentorHomePage from './MentorHomePage';
 import MentorSwipe from './MentorSwipe'; 
 import TraineesPage from './TraineesPage'; 
 import MentorDashboard from './MentorDashboard'; 

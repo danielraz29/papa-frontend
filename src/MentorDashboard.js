@@ -42,24 +42,32 @@ function MentorDashboard() {
   const [showOptionsId, setShowOptionsId] = useState(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
   const [mentorName, setMentorName] = useState('');
-  const [showMentees, setShowMentees] = useState(true);
+const [showMentees, setShowMentees] = useState(false); // ולא true
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) return navigate("/");
-    setLoggedUser(user);
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user) return navigate("/");
+  setLoggedUser(user);
 
-    fetch(`${API_URL}/api/mentor-name?userId=${user.id}`)
-      .then(res => res.json()).then(data => setMentorName(data.fullName || ""));
+  fetch(`${API_URL}/api/mentor-name?userId=${user.id}`)
+    .then(res => res.json())
+    .then(data => setMentorName(data.fullName || ""));
 
-    fetch(`${API_URL}/api/mentor-meetings?userId=${user.id}`)
-      .then(res => res.json()).then(data => setMeetings(Array.isArray(data) ? data : []));
+  fetch(`${API_URL}/api/mentor-meetings?userId=${user.id}`)
+    .then(res => res.json())
+    .then(data => setMeetings(Array.isArray(data) ? data : []));
+}, [navigate]);
 
-    fetch(`${API_URL}/api/mentor-assigned?userId=${user.id}`)
-      .then(res => res.json()).then(data => setMentees(Array.isArray(data) ? data : []));
-  }, [navigate]);
+useEffect(() => {
+  if (showMentees && loggedUser) {
+    fetch(`${API_URL}/api/mentor-assigned?userId=${loggedUser.id}`)
+      .then(res => res.json())
+      .then(data => setMentees(Array.isArray(data) ? data : []));
+  }
+}, [showMentees, loggedUser]);
+
 
   const handleLogout = () => {
     localStorage.removeItem("user");

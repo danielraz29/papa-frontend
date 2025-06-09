@@ -1,3 +1,4 @@
+// MentorDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,8 +12,6 @@ import styles from './MentorDashboard.module.css';
 import { registerLocale } from 'react-datepicker';
 import he from 'date-fns/locale/he';
 registerLocale('he', he);
-
-const API_URL = "https://papa-backend.onrender.com";
 
 const getStartOfWeek = (date) => {
   const start = new Date(date);
@@ -36,33 +35,32 @@ function MentorDashboard() {
   const [showMentees, setShowMentees] = useState(false);
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;
+  const userName = localStorage.getItem("userName");
 
   useEffect(() => {
-    if (!userId) {
+    if (!userName) {
       navigate("/");
       return;
     }
 
-    fetch(`${API_URL}/api/mentor-name?userId=${userId}`)
+    fetch(`https://papa-backend.onrender.com/api/mentor-name?userName=${userName}`)
       .then(res => res.json())
       .then(data => setMentorName(data.fullName || ""))
       .catch(() => setMentorName(""));
 
-    fetch(`${API_URL}/api/mentor-meetings?userId=${userId}`)
+    fetch(`https://papa-backend.onrender.com/api/mentor-meetings?userName=${userName}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMeetings(data) : setMeetings([]))
       .catch(() => setMeetings([]));
 
-    fetch(`${API_URL}/api/mentor-assigned?userId=${userId}`)
+    fetch(`https://papa-backend.onrender.com/api/mentor-assigned?userName=${userName}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMentees(data) : setMentees([]))
       .catch(() => setMentees([]));
-  }, [navigate, userId]);
+  }, [navigate, userName]);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("userName");
     navigate("/");
   };
 
@@ -76,14 +74,14 @@ function MentorDashboard() {
     }
 
     const meetingToSave = {
-      mentorId: userId,
+      mentorId: userName,
       menteeId: newMeeting.menteeId,
       summary: newMeeting.summary,
       startDateTime: newMeeting.startDateTime,
       endDateTime: newMeeting.endDateTime
     };
 
-    fetch(`${API_URL}/api/meetings`, {
+    fetch("https://papa-backend.onrender.com/api/meetings", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(meetingToSave)
@@ -96,7 +94,7 @@ function MentorDashboard() {
   };
 
   const handleDeleteMeeting = (id) => {
-    fetch(`${API_URL}/api/meetings/${id}`, {
+    fetch(`https://papa-backend.onrender.com/api/meetings/${id}`, {
       method: "DELETE",
     }).then(res => {
       if (res.ok) {
@@ -117,23 +115,18 @@ function MentorDashboard() {
 
   return (
     <div className={styles.dashboardWrapper}>
-    <nav className={styles.navbar}>
-  <div className={styles.navTitle}>
-    <FaCalendarAlt /> לוח חונכות אישי
-  </div>
-  <div className={styles.navLinks}>
-    <button><FaHome /> דף בית</button>
-    <button><FaUser /> הפרופיל שלי</button>
-    <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
-    <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
-  </div>
-</nav>
-
-
-
+      <nav className={styles.navbar}>
+        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
+        <div className={styles.navLinks}>
+          <button><FaHome /> דף בית</button>
+          <button><FaUser /> הפרופיל שלי</button>
+          <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
+          <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
+        </div>
+      </nav>
 
       <main className={styles.mainContent}>
-        <h1 className={styles.mentorNameHeader}>שלום, {mentorName}</h1>
+        <h1 className={styles.mentorNameHeader}> שלום, {mentorName}</h1>
 
         <div className={styles.calendarWrapper}>
           <div className={styles.calendarTopBarRight}>
@@ -199,18 +192,17 @@ function MentorDashboard() {
                 onChange={e => setNewMeeting({ ...newMeeting, summary: e.target.value })}
               />
 
-             <label>בחר חניך</label>
-<select
-  className={styles.input}
-  value={newMeeting.menteeId}
-  onChange={e => setNewMeeting({ ...newMeeting, menteeId: e.target.value })}
->
-  <option value="">-- בחר חניך --</option>
-  {mentees.map((m, idx) => (
-    <option key={idx} value={m.menteeId}>{m.fullName}</option>
-  ))}
-</select>
-
+              <label>בחר חניך</label>
+              <select
+                className={styles.input}
+                value={newMeeting.menteeId}
+                onChange={e => setNewMeeting({ ...newMeeting, menteeId: e.target.value })}
+              >
+                <option value="">-- בחר חניך --</option>
+                {mentees.map((m, idx) => (
+                  <option key={idx} value={m.menteeId}>{m.fullName}</option>
+                ))}
+              </select>
 
               <div className={styles.dateRow}>
                 <div>

@@ -208,9 +208,9 @@ useEffect(() => {
             {currentWeekDates.map((date, colIdx) => (
               <div key={colIdx} className={styles.dayColumn}>
                 {meetings
-  .filter(m => new Date(m.startDateTime).toDateString() === date.toDateString())
-  .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime)) 
-  .map((m, idx) => (
+                  .filter(m => new Date(m.startDateTime).toDateString() === date.toDateString())
+                  .sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime)) 
+                  .map((m, idx) => (
 
                   <div key={idx} className={styles.meetingBlock}>
                     <div className={styles.meetingInfo}>

@@ -135,7 +135,7 @@ function MenteeDashboard() {
   <div className={styles.navLinks}>
     <button onClick={() => navigate('/dashboard/mentee')}><FaHome /> דף בית</button>
     <button onClick={() => navigate('/profile')}><FaUser /> הפרופיל שלי</button>
-    <button onClick={handleSwipe}><FaSearch /> חפש חניך</button>
+    <button onClick={handleSwipe}><FaSearch /> חפש חונך</button>
     <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
   </div>
 </nav>

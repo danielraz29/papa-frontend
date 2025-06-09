@@ -1,7 +1,4 @@
-
-
-
-// MentorDashboard.jsx - גרסה מלאה ומעודכנת הכוללת יומן + ניהול חניכים + עיצוב + עריכה
+// MentorDashboard.jsx - גרסה מלאה ומתוקנת לחלוטין
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -55,16 +52,19 @@ function MentorDashboard() {
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user) return navigate("/");
     setLoggedUser(user);
+    fetchData(user.id);
+  }, [navigate]);
 
-    fetch(`${API_URL}/api/mentor-name?userId=${user.id}`)
+  const fetchData = (userId) => {
+    fetch(`${API_URL}/api/mentor-name?userId=${userId}`)
       .then(res => res.json()).then(data => setMentorName(data.fullName || ""));
 
-    fetch(`${API_URL}/api/mentor-meetings?userId=${user.id}`)
+    fetch(`${API_URL}/api/mentor-meetings?userId=${userId}`)
       .then(res => res.json()).then(data => setMeetings(Array.isArray(data) ? data : []));
 
-    fetch(`${API_URL}/api/mentor-assigned?userId=${user.id}`)
+    fetch(`${API_URL}/api/mentor-assigned?userId=${userId}`)
       .then(res => res.json()).then(data => setMentees(Array.isArray(data) ? data : []));
-  }, [navigate]);
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -101,10 +101,8 @@ function MentorDashboard() {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(meetingToSave)
-    }).then(res => res.json()).then(data => {
-      setMeetings(prev => editingMeetingId
-        ? prev.map(m => m._id === editingMeetingId ? data : m)
-        : [...prev, data]);
+    }).then(res => res.json()).then(() => {
+      fetchData(loggedUser.id);
       resetForm();
     });
   };
@@ -125,7 +123,7 @@ function MentorDashboard() {
 
   const handleDeleteMeeting = (id) => {
     fetch(`${API_URL}/api/meetings/${id}`, { method: "DELETE" })
-      .then(res => res.ok && setMeetings(meetings.filter(m => m._id !== id)));
+      .then(res => res.ok && fetchData(loggedUser.id));
   };
 
   const daysOfWeek = ['א׳', 'ב׳', 'ג׳', 'ד׳', 'ה׳'];
@@ -149,8 +147,6 @@ function MentorDashboard() {
 
       <main className={styles.mainContent}>
         <h1 className={styles.mentorNameHeader}>שלום, {mentorName}</h1>
-
-        <button onClick={() => setShowMentees(!showMentees)} className={styles.menteesToggleBtn}>החניכים שלי</button>
 
         {showMentees && (
           <div className={styles.menteesTableSection}>
@@ -188,7 +184,12 @@ function MentorDashboard() {
               <span>{currentWeekStart.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' })}</span>
               <button onClick={() => setCurrentWeekStart(new Date(currentWeekStart.setDate(currentWeekStart.getDate() + 7)))}><FaChevronLeft /></button>
             </div>
-            <button onClick={() => setShowForm(!showForm)} className={styles.addMeetingButtonBlue}><FaPlus /> {editingMeetingId ? "עדכן פגישה" : "הוסף פגישה"}</button>
+            <button onClick={() => {
+              setShowForm(!showForm);
+              if (editingMeetingId) resetForm();
+            }} className={styles.addMeetingButtonBlue}>
+              <FaPlus /> {editingMeetingId ? "ביטול שינויים" : "הוסף פגישה"}
+            </button>
           </div>
 
           <div className={styles.calendarHeader}>
@@ -298,7 +299,9 @@ function MentorDashboard() {
                   />
                 </div>
               </div>
-              <button className={styles.saveButton} onClick={handleAddMeeting}>{editingMeetingId ? "עדכן פגישה" : "שמור פגישה"}</button>
+              <button className={styles.saveButton} onClick={handleAddMeeting}>
+                {editingMeetingId ? "עדכן פגישה" : "שמור פגישה"}
+              </button>
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-// MentorDashboard.jsx - גרסה מלאה ומתוקנת כולל כל הדרישות
+// MentorDashboard.jsx - גרסה סופית מתוקנת
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -42,7 +42,7 @@ function MentorDashboard() {
   const [showOptionsId, setShowOptionsId] = useState(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
   const [mentorName, setMentorName] = useState('');
-  const [showMentees, setShowMentees] = useState(false);
+  const [showMentees, setShowMentees] = useState(true);
 
   const navigate = useNavigate();
 
@@ -127,13 +127,12 @@ function MentorDashboard() {
   return (
     <div className={styles.dashboardWrapper}>
       <nav className={styles.navbar}>
-        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
         <div className={styles.navLinks}>
           <button><FaHome /> דף בית</button>
           <button><FaUser /> הפרופיל שלי</button>
-          <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
           <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
         </div>
+        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
       </nav>
 
       <main className={styles.mainContent}>

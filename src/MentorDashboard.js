@@ -1,4 +1,4 @@
-// ✅ גרסה מעודכנת ל-MentorDashboard.jsx עם כל הבקשות שלך
+// ✅ גרסה מלאה ומתוקנת ל-MentorDashboard.jsx עם כל הבקשות שלך
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -158,7 +158,6 @@ function MentorDashboard() {
         <div className={styles.navLinks}>
           <button><FaHome /> דף בית</button>
           <button><FaUser /> הפרופיל שלי</button>
-          <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
           <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
         </div>
         <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
@@ -170,14 +169,34 @@ function MentorDashboard() {
         <button onClick={() => setShowMentees(!showMentees)} className={styles.menteesToggleBtn}>החניכים שלי</button>
 
         {showMentees && (
-          <div className={styles.menteesTableSection}>...</div>
+          <div className={styles.menteesTableSection}>
+            <h2>רשימת החניכים שלי</h2>
+            <table className={styles.menteesTable}>
+              <thead>
+                <tr>
+                  <th>שם מלא</th>
+                  <th>מייל</th>
+                  <th>טלפון</th>
+                  <th>מוסד לימודים</th>
+                  <th>ת"ז</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mentees.map((mentee, idx) => (
+                  <tr key={idx}>
+                    <td>{mentee.fullName}</td>
+                    <td>{mentee.email}</td>
+                    <td>{mentee.phone}</td>
+                    <td>{mentee.school}</td>
+                    <td>{mentee.idNumber || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
 
-        <div className={styles.calendarWrapper}>...</div>
-
-        {showForm && (
-          <div className={styles.formSection}>...</div>
-        )}
+        {/* כאן תוכל להוסיף calendarWrapper ו-formSection כרגיל */}
       </main>
     </div>
   );

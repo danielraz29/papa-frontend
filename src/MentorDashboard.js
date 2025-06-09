@@ -130,6 +130,7 @@ function MentorDashboard() {
         <div className={styles.navLinks}>
           <button><FaHome /> דף בית</button>
           <button><FaUser /> הפרופיל שלי</button>
+          <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
           <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
         </div>
         <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
@@ -166,21 +167,30 @@ function MentorDashboard() {
           </div>
         )}
 
-        <div className={styles.calendarWrapper}>
-          <div className={styles.calendarTopBarRight}>
-            <button onClick={() => {
-              if (editingMeetingId) resetForm();
-              else setShowForm(!showForm);
-            }} className={styles.addMeetingButtonBlue}>
-              <FaPlus /> {editingMeetingId ? "ביטול שינויים" : "הוסף פגישה"}
-            </button>
-            <div className={styles.calendarControlsInline}>
-              <button onClick={() => setCurrentWeekStart(getStartOfWeek(new Date(currentWeekStart.setDate(currentWeekStart.getDate() - 7))))}><FaChevronRight /></button>
-              <span>{currentWeekStart.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' })}</span>
-              <button onClick={() => setCurrentWeekStart(getStartOfWeek(new Date(currentWeekStart.setDate(currentWeekStart.getDate() + 7))))}><FaChevronLeft /></button>
-            </div>
-            <h2 className={styles.calendarTitle}>היומן שלי</h2>
-          </div>
+        <div className={styles.calendarTopBarRight}>
+  <h2 className={styles.calendarTitle}>היומן שלי</h2>
+
+  <div className={styles.calendarControlsInline}>
+    <button onClick={() => setCurrentWeekStart(getStartOfWeek(new Date(currentWeekStart.setDate(currentWeekStart.getDate() - 7))))}>
+      <FaChevronRight />
+    </button>
+    <span>{currentWeekStart.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' })}</span>
+    <button onClick={() => setCurrentWeekStart(getStartOfWeek(new Date(currentWeekStart.setDate(currentWeekStart.getDate() + 7))))}>
+      <FaChevronLeft />
+    </button>
+  </div>
+
+  <button
+    onClick={() => {
+      if (editingMeetingId) resetForm();
+      else setShowForm(!showForm);
+    }}
+    className={styles.addMeetingButtonBlue}
+  >
+    <FaPlus /> {editingMeetingId ? "ביטול שינויים" : "הוסף פגישה"}
+  </button>
+</div>
+
 
           <div className={styles.calendarHeader}>
             {currentWeekDates.map((date, idx) => (

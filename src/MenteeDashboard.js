@@ -215,18 +215,18 @@ const toLocalISOString = (date) => {
                   onChange={e => setNewMeeting({ ...newMeeting, summary: e.target.value })}
                 />
                 <label>בחר חונך</label>
-                <select
-                  className={styles.input}
-                  value={newMeeting.mentorId}
-                  onChange={e => setNewMeeting({ ...newMeeting, mentorId: e.target.value })}
-                >
-                  <option value="">-- בחר חונך --</option>
-                  {assignments.map((a, idx) => (
-                    a.mentorId && (
-                      <option key={idx} value={a.mentorId}>{a.mentorName || a.mentorId}</option>
-                    )
-                  ))}
-                </select>
+              <select
+  value={newMeeting.mentorId}
+  onChange={e => setNewMeeting({ ...newMeeting, mentorId: e.target.value })}
+>
+  <option value="">-- בחר חונך --</option>
+  {assignments.map((a, idx) => (
+    a.mentorId && (
+      <option key={idx} value={a.mentorId}>{a.mentorName || a.mentorId}</option>
+    )
+  ))}
+</select>
+
                 <div className={styles.dateRow}>
                   <div>
                     <label>התחלה</label>

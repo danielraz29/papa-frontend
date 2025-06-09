@@ -140,8 +140,33 @@ function MentorDashboard() {
         <h1 className={styles.mentorNameHeader}>שלום, {mentorName}</h1>
 
         {showMentees && (
-          <div className={styles.menteesTableSection}>...</div>
-        )}
+  <div className={styles.menteesTableSection}>
+    <h2>רשימת החניכים שלי</h2>
+    <table className={styles.menteesTable}>
+      <thead>
+        <tr>
+          <th>שם מלא</th>
+          <th>מייל</th>
+          <th>טלפון</th>
+          <th>מוסד לימודים</th>
+          <th>ת"ז</th>
+        </tr>
+      </thead>
+      <tbody>
+        {mentees.map((mentee, idx) => (
+          <tr key={idx}>
+            <td>{mentee.fullName}</td>
+            <td>{mentee.email}</td>
+            <td>{mentee.phone}</td>
+            <td>{mentee.school}</td>
+            <td>{mentee.idNumber || '—'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
+
 
         <div className={styles.calendarWrapper}>
           <div className={styles.calendarTopBarRight}>

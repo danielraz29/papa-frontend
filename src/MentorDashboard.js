@@ -17,6 +17,7 @@ const API_URL = "https://papa-backend.onrender.com";
 const getStartOfWeek = (date) => {
   const start = new Date(date);
   start.setDate(date.getDate() - ((start.getDay() + 6) % 7));
+  start.setHours(0, 0, 0, 0);
   return start;
 };
 
@@ -26,10 +27,13 @@ function MentorDashboard() {
   const [mentees, setMentees] = useState([]);
   const [newMeeting, setNewMeeting] = useState({
     summary: '',
+    description: '',
     startDateTime: new Date(),
     endDateTime: new Date(),
-    menteeId: ''
+    menteeId: '',
+    status: 'open'
   });
+  const [editingMeetingId, setEditingMeetingId] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showOptionsId, setShowOptionsId] = useState(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(new Date()));
@@ -67,6 +71,19 @@ function MentorDashboard() {
     navigate("/");
   };
 
+  const resetForm = () => {
+    setNewMeeting({
+      summary: '',
+      description: '',
+      startDateTime: new Date(),
+      endDateTime: new Date(),
+      menteeId: '',
+      status: 'open'
+    });
+    setEditingMeetingId(null);
+    setShowForm(false);
+  };
+
   const handleAddMeeting = () => {
     if (
       newMeeting.startDateTime > newMeeting.endDateTime ||
@@ -80,20 +97,45 @@ function MentorDashboard() {
       mentorId: loggedUser.id,
       menteeId: newMeeting.menteeId,
       summary: newMeeting.summary,
-      startDateTime: newMeeting.startDateTime,
-      endDateTime: newMeeting.endDateTime
+      description: newMeeting.description,
+      status: newMeeting.status,
+      startDateTime: newMeeting.startDateTime.toISOString(),
+      endDateTime: newMeeting.endDateTime.toISOString()
     };
 
-    fetch(`${API_URL}/api/meetings`, {
-      method: "POST",
+    const url = editingMeetingId
+      ? `${API_URL}/api/meetings/${editingMeetingId}`
+      : `${API_URL}/api/meetings`;
+
+    const method = editingMeetingId ? 'PUT' : 'POST';
+
+    fetch(url, {
+      method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(meetingToSave)
     })
       .then(res => res.json())
       .then(data => {
-        setMeetings(prev => [...prev, data]);
-        setShowForm(false);
+        if (editingMeetingId) {
+          setMeetings(meetings.map(m => (m._id === editingMeetingId ? data : m)));
+        } else {
+          setMeetings(prev => [...prev, data]);
+        }
+        resetForm();
       });
+  };
+
+  const handleEditMeeting = (meeting) => {
+    setNewMeeting({
+      summary: meeting.summary,
+      description: meeting.description || '',
+      startDateTime: new Date(meeting.startDateTime),
+      endDateTime: new Date(meeting.endDateTime),
+      menteeId: meeting.menteeId,
+      status: meeting.status || 'open'
+    });
+    setEditingMeetingId(meeting._id);
+    setShowForm(true);
   };
 
   const handleDeleteMeeting = (id) => {
@@ -119,13 +161,13 @@ function MentorDashboard() {
   return (
     <div className={styles.dashboardWrapper}>
       <nav className={styles.navbar}>
-        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
         <div className={styles.navLinks}>
           <button><FaHome /> דף בית</button>
           <button><FaUser /> הפרופיל שלי</button>
           <button onClick={() => setShowMentees(!showMentees)}><FaUsers /> החניכים שלי</button>
           <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
         </div>
+        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
       </nav>
 
       <main className={styles.mainContent}>
@@ -139,7 +181,7 @@ function MentorDashboard() {
               <span>{currentWeekStart.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' })}</span>
               <button onClick={() => setCurrentWeekStart(new Date(currentWeekStart.setDate(currentWeekStart.getDate() + 7)))}><FaChevronLeft /></button>
             </div>
-            <button onClick={() => setShowForm(!showForm)} className={styles.addMeetingButtonBlue}><FaPlus /> הוסף פגישה</button>
+            <button onClick={() => setShowForm(!showForm)} className={styles.addMeetingButtonBlue}><FaPlus /> {editingMeetingId ? "עדכן פגישה" : "הוסף פגישה"}</button>
           </div>
 
           <div className={styles.calendarHeader}>
@@ -164,6 +206,7 @@ function MentorDashboard() {
                         />
                         {showOptionsId === m._id && (
                           <div className={styles.optionsMenu}>
+                            <button onClick={() => handleEditMeeting(m)}>✏️ ערוך</button>
                             <button onClick={() => handleDeleteMeeting(m._id)}>🗑 מחק</button>
                           </div>
                         )}
@@ -175,9 +218,8 @@ function MentorDashboard() {
                       </strong>
                       <span>
                         {m.summary}<br />
-                        {mentees.find(mt => mt.menteeId === m.menteeId)?.fullName
-                          ? `עם ${mentees.find(mt => mt.menteeId === m.menteeId)?.fullName}`
-                          : ''}
+                        {mentees.find(mt => mt.menteeId === m.menteeId)?.fullName ? `עם ${mentees.find(mt => mt.menteeId === m.menteeId)?.fullName}` : ''}<br />
+                        סטטוס: {m.status || '—'}
                       </span>
                     </div>
                   </div>
@@ -194,6 +236,21 @@ function MentorDashboard() {
                 value={newMeeting.summary}
                 onChange={e => setNewMeeting({ ...newMeeting, summary: e.target.value })}
               />
+              <label>תיאור הפגישה</label>
+              <textarea
+                rows="3"
+                value={newMeeting.description}
+                onChange={e => setNewMeeting({ ...newMeeting, description: e.target.value })}
+              />
+              <label>סטטוס</label>
+              <select
+                value={newMeeting.status}
+                onChange={e => setNewMeeting({ ...newMeeting, status: e.target.value })}
+              >
+                <option value="open">תואמה</option>
+                <option value="done">התקיימה</option>
+                <option value="cancel">בוטלה</option>
+              </select>
               <label>בחר חניך</label>
               <select
                 className={styles.input}
@@ -231,38 +288,10 @@ function MentorDashboard() {
                   />
                 </div>
               </div>
-              <button className={styles.saveButton} onClick={handleAddMeeting}>שמור פגישה</button>
+              <button className={styles.saveButton} onClick={handleAddMeeting}>{editingMeetingId ? "עדכן פגישה" : "שמור פגישה"}</button>
             </div>
           )}
         </div>
-
-        {showMentees && (
-          <div className={styles.menteesTableSection}>
-            <h2>רשימת החניכים שלי</h2>
-            <table className={styles.menteesTable}>
-              <thead>
-                <tr>
-                  <th>שם מלא</th>
-                  <th>מייל</th>
-                  <th>מספר טלפון</th>
-                  <th>מוסד לימודים</th>
-                  <th>תעודת זהות</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mentees.map((mentee, idx) => (
-                  <tr key={idx}>
-                    <td>{mentee.fullName}</td>
-                    <td>{mentee.email}</td>
-                    <td>{mentee.phone}</td>
-                    <td>{mentee.school}</td>
-                    <td>{mentee.idNumber || '—'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
       </main>
     </div>
   );

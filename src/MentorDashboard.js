@@ -46,17 +46,17 @@ function MentorDashboard() {
     }
     setLoggedUser(user);
 
-    fetch(`${API_URL}/api/mentor-name?mentorId=${user.id}`)
+    fetch(`${API_URL}/api/mentor-name?userId=${user.id}`)
       .then(res => res.json())
       .then(data => setMentorName(data.fullName || ""))
       .catch(() => setMentorName(""));
 
-    fetch(`${API_URL}/api/mentor-meetings?mentorId=${user.id}`)
+    fetch(`${API_URL}/api/mentor-meetings?userId=${user.id}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMeetings(data) : setMeetings([]))
       .catch(() => setMeetings([]));
 
-    fetch(`${API_URL}/api/mentor-assigned?mentorId=${user.id}`)
+    fetch(`${API_URL}/api/mentor-assigned?userId=${user.id}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMentees(data) : setMentees([]))
       .catch(() => setMentees([]));

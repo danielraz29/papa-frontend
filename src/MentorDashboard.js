@@ -1,10 +1,8 @@
-// MentorDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  FaHome, FaSignOutAlt, FaUser, FaSearch,
-  FaCalendarAlt, FaPlus, FaEllipsisV,
-  FaChevronLeft, FaChevronRight, FaUsers
+  FaHome, FaSignOutAlt, FaUser, FaCalendarAlt, FaPlus,
+  FaChevronLeft, FaChevronRight, FaUsers, FaEllipsisV
 } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -12,6 +10,8 @@ import styles from './MentorDashboard.module.css';
 import { registerLocale } from 'react-datepicker';
 import he from 'date-fns/locale/he';
 registerLocale('he', he);
+
+const API_URL = "https://papa-backend.onrender.com";
 
 const getStartOfWeek = (date) => {
   const start = new Date(date);
@@ -35,7 +35,9 @@ function MentorDashboard() {
   const [showMentees, setShowMentees] = useState(false);
 
   const navigate = useNavigate();
-  const userName = localStorage.getItem("userName");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
+  const userName = user?.userName; // 🛠️ מוודאים שזה המייל, לא שם פרטי
 
   useEffect(() => {
     if (!userName) {
@@ -43,24 +45,24 @@ function MentorDashboard() {
       return;
     }
 
-    fetch(`https://papa-backend.onrender.com/api/mentor-name?userName=${userName}`)
+    fetch(`${API_URL}/api/mentor-name?userName=${encodeURIComponent(userName)}`)
       .then(res => res.json())
       .then(data => setMentorName(data.fullName || ""))
       .catch(() => setMentorName(""));
 
-    fetch(`https://papa-backend.onrender.com/api/mentor-meetings?userName=${userName}`)
+    fetch(`${API_URL}/api/mentor-meetings?userName=${encodeURIComponent(userName)}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMeetings(data) : setMeetings([]))
       .catch(() => setMeetings([]));
 
-    fetch(`https://papa-backend.onrender.com/api/mentor-assigned?userName=${userName}`)
+    fetch(`${API_URL}/api/mentor-assigned?userName=${encodeURIComponent(userName)}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMentees(data) : setMentees([]))
       .catch(() => setMentees([]));
   }, [navigate, userName]);
 
   const handleLogout = () => {
-    localStorage.removeItem("userName");
+    localStorage.removeItem("user");
     navigate("/");
   };
 
@@ -74,14 +76,14 @@ function MentorDashboard() {
     }
 
     const meetingToSave = {
-      mentorId: userName,
+      mentorId: userId,
       menteeId: newMeeting.menteeId,
       summary: newMeeting.summary,
       startDateTime: newMeeting.startDateTime,
       endDateTime: newMeeting.endDateTime
     };
 
-    fetch("https://papa-backend.onrender.com/api/meetings", {
+    fetch(`${API_URL}/api/meetings`, {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(meetingToSave)
@@ -94,7 +96,7 @@ function MentorDashboard() {
   };
 
   const handleDeleteMeeting = (id) => {
-    fetch(`https://papa-backend.onrender.com/api/meetings/${id}`, {
+    fetch(`${API_URL}/api/meetings/${id}`, {
       method: "DELETE",
     }).then(res => {
       if (res.ok) {
@@ -126,7 +128,7 @@ function MentorDashboard() {
       </nav>
 
       <main className={styles.mainContent}>
-        <h1 className={styles.mentorNameHeader}> שלום, {mentorName}</h1>
+        <h1 className={styles.mentorNameHeader}>שלום, {mentorName}</h1>
 
         <div className={styles.calendarWrapper}>
           <div className={styles.calendarTopBarRight}>
@@ -191,7 +193,6 @@ function MentorDashboard() {
                 value={newMeeting.summary}
                 onChange={e => setNewMeeting({ ...newMeeting, summary: e.target.value })}
               />
-
               <label>בחר חניך</label>
               <select
                 className={styles.input}
@@ -203,7 +204,6 @@ function MentorDashboard() {
                   <option key={idx} value={m.menteeId}>{m.fullName}</option>
                 ))}
               </select>
-
               <div className={styles.dateRow}>
                 <div>
                   <label>התחלה</label>

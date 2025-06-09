@@ -84,13 +84,19 @@ function MenteeDashboard() {
       alert('לא נמצא שיבוץ מתאים לחונך');
       return;
     }
+const toLocalISOString = (date) => {
+  const offsetMs = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offsetMs).toISOString();
+};
+
 
     const meetingToSave = {
       mentorId: newMeeting.mentorId,
       menteeId: loggedUser.id,
       summary: newMeeting.summary,
-      startDateTime: newMeeting.startDateTime.toISOString(),
-      endDateTime: newMeeting.endDateTime.toISOString(),
+      startDateTime: toLocalISOString(newMeeting.startDateTime),
+      endDateTime: toLocalISOString(newMeeting.endDateTime),
+
       matchId: matched._id,
     };
 

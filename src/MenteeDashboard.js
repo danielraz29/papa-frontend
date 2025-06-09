@@ -1,4 +1,4 @@
-// MenteeDashboard.jsx with backend integration for fetching/saving meetings and assignments
+// MenteeDashboard.jsx with timezone fix
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -15,13 +15,12 @@ registerLocale('he', he);
 
 const getStartOfWeek = (date) => {
   const d = new Date(date);
-  const day = d.getDay(); // 0-6 (0 = ראשון)
-  const diff = day === 0 ? 0 : -day; // אם היום ראשון, אל תזיז
+  const day = d.getDay();
+  const diff = day === 0 ? 0 : -day;
   d.setDate(d.getDate() + diff);
   d.setHours(0, 0, 0, 0);
   return d;
 };
-
 
 function MenteeDashboard() {
   const [loggedUser, setLoggedUser] = useState(null);
@@ -90,8 +89,8 @@ function MenteeDashboard() {
       mentorId: newMeeting.mentorId,
       menteeId: loggedUser.id,
       summary: newMeeting.summary,
-      startDateTime: newMeeting.startDateTime,
-      endDateTime: newMeeting.endDateTime,
+      startDateTime: newMeeting.startDateTime.toISOString(),
+      endDateTime: newMeeting.endDateTime.toISOString(),
       matchId: matched._id,
     };
 
@@ -108,16 +107,12 @@ function MenteeDashboard() {
   };
 
   const handleDeleteMeeting = (id) => {
-    fetch(`https://papa-backend.onrender.com/api/meetings/${id}`, {
-      method: "DELETE",
-    })
+    fetch(`https://papa-backend.onrender.com/api/meetings/${id}`, { method: "DELETE" })
       .then(res => {
         if (res.ok) {
-          setMeetings(meetings.filter((m) => m._id !== id));
+          setMeetings(meetings.filter(m => m._id !== id));
           setShowOptionsId(null);
-        } else {
-          alert("שגיאה במחיקת הפגישה");
-        }
+        } else alert("שגיאה במחיקת הפגישה");
       });
   };
 
@@ -130,22 +125,21 @@ function MenteeDashboard() {
 
   return (
     <div className={styles.dashboardWrapper}>
-     <nav className={styles.navbar}>
-  <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
-  <div className={styles.navLinks}>
-    <button onClick={() => navigate('/dashboard/mentee')}><FaHome /> דף בית</button>
-    <button onClick={() => navigate('/profile')}><FaUser /> הפרופיל שלי</button>
-    <button onClick={handleSwipe}><FaSearch /> חפש חונך</button>
-    <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
-  </div>
-</nav>
-
+      <nav className={styles.navbar}>
+        <div className={styles.navTitle}><FaCalendarAlt /> לוח חונכות אישי</div>
+        <div className={styles.navLinks}>
+          <button onClick={() => navigate('/dashboard/mentee')}><FaHome /> דף בית</button>
+          <button onClick={() => navigate('/profile')}><FaUser /> הפרופיל שלי</button>
+          <button onClick={handleSwipe}><FaSearch /> חפש חונך</button>
+          <button onClick={handleLogout}><FaSignOutAlt /> יציאה</button>
+        </div>
+      </nav>
 
       <main className={styles.mainContent}>
         {!hasMentor ? (
           <div className={styles.alertBox}>
             עדיין לא שובצת לחונך 🎓 לחץ על “חפש חונכים” כדי להתחיל
-           <div><button onClick={handleFindMentor}><FaSearch /> חפש חונכים</button></div> 
+            <div><button onClick={handleFindMentor}><FaSearch /> חפש חונכים</button></div>
           </div>
         ) : (
           <div className={styles.calendarWrapper}>
@@ -172,12 +166,11 @@ function MenteeDashboard() {
               {currentWeekDates.map((date, colIdx) => (
                 <div key={colIdx} className={styles.dayColumn}>
                   {meetings.filter(m => {
-  const meetingDate = new Date(m.startDateTime);
-  return meetingDate.getFullYear() === date.getFullYear() &&
-         meetingDate.getMonth() === date.getMonth() &&
-         meetingDate.getDate() === date.getDate();
-})
-.map((m, idx) => (
+                    const meetingDate = new Date(m.startDateTime);
+                    return meetingDate.getFullYear() === date.getFullYear() &&
+                           meetingDate.getMonth() === date.getMonth() &&
+                           meetingDate.getDate() === date.getDate();
+                  }).map((m, idx) => (
                     <div key={idx} className={styles.meetingBlock}>
                       <div className={styles.meetingInfo}>
                         <div className={styles.meetingHeader}>
@@ -192,9 +185,9 @@ function MenteeDashboard() {
                           )}
                         </div>
                         <strong>
-                          {new Date(m.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                          {new Date(m.startDateTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', hour12: false })}
                           {' - '}
-                          {new Date(m.endDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                          {new Date(m.endDateTime).toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', hour12: false })}
                         </strong>
                         <span>
                           {m.summary}<br />
@@ -220,7 +213,6 @@ function MenteeDashboard() {
                   className={styles.input}
                   value={newMeeting.mentorId}
                   onChange={e => setNewMeeting({ ...newMeeting, mentorId: e.target.value })}
-                  style={{ marginBottom: '12px', padding: '8px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '14px' }}
                 >
                   <option value="">-- בחר חונך --</option>
                   {assignments.map((a, idx) => (
@@ -235,7 +227,7 @@ function MenteeDashboard() {
                     <DatePicker
                       locale="he"
                       selected={newMeeting.startDateTime}
-                      onChange={(date) => setNewMeeting({ ...newMeeting, startDateTime: date })}
+                      onChange={date => setNewMeeting({ ...newMeeting, startDateTime: date })}
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}
@@ -247,7 +239,7 @@ function MenteeDashboard() {
                     <DatePicker
                       locale="he"
                       selected={newMeeting.endDateTime}
-                      onChange={(date) => setNewMeeting({ ...newMeeting, endDateTime: date })}
+                      onChange={date => setNewMeeting({ ...newMeeting, endDateTime: date })}
                       showTimeSelect
                       timeFormat="HH:mm"
                       timeIntervals={15}

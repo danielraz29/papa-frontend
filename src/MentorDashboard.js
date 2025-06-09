@@ -1,3 +1,4 @@
+// MentorDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -20,6 +21,7 @@ const getStartOfWeek = (date) => {
 };
 
 function MentorDashboard() {
+  const [loggedUser, setLoggedUser] = useState(null);
   const [meetings, setMeetings] = useState([]);
   const [mentees, setMentees] = useState([]);
   const [newMeeting, setNewMeeting] = useState({
@@ -35,31 +37,30 @@ function MentorDashboard() {
   const [showMentees, setShowMentees] = useState(false);
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userId = user?.id;
-  const userName = user?.userName; // 🛠️ מוודאים שזה המייל, לא שם פרטי
 
   useEffect(() => {
-    if (!userName) {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
       navigate("/");
       return;
     }
+    setLoggedUser(user);
 
-    fetch(`${API_URL}/api/mentor-name?userName=${encodeURIComponent(userName)}`)
+    fetch(`${API_URL}/api/mentor-name?mentorId=${user.id}`)
       .then(res => res.json())
       .then(data => setMentorName(data.fullName || ""))
       .catch(() => setMentorName(""));
 
-    fetch(`${API_URL}/api/mentor-meetings?userName=${encodeURIComponent(userName)}`)
+    fetch(`${API_URL}/api/mentor-meetings?mentorId=${user.id}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMeetings(data) : setMeetings([]))
       .catch(() => setMeetings([]));
 
-    fetch(`${API_URL}/api/mentor-assigned?userName=${encodeURIComponent(userName)}`)
+    fetch(`${API_URL}/api/mentor-assigned?mentorId=${user.id}`)
       .then(res => res.json())
       .then(data => Array.isArray(data) ? setMentees(data) : setMentees([]))
       .catch(() => setMentees([]));
-  }, [navigate, userName]);
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -76,7 +77,7 @@ function MentorDashboard() {
     }
 
     const meetingToSave = {
-      mentorId: userId,
+      mentorId: loggedUser.id,
       menteeId: newMeeting.menteeId,
       summary: newMeeting.summary,
       startDateTime: newMeeting.startDateTime,
